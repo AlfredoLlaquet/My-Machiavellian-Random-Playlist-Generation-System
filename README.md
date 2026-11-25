@@ -8,7 +8,7 @@ Each tool has its own self-contained Firefox installer. Install the ones you use
 
 | Site | Tool and bookmark name | Version | What it does | Installer |
 | --- | --- | --- | --- | --- |
-| YouTube Music | **Add Songs** `+` | 2.1.1 | Finds recordings by the artists you enter and adds missing video IDs to the collection. | [YouTube-Music-Alfredo-Import.html](installers/YouTube-Music-Alfredo-Import.html) |
+| YouTube Music | **Add Songs** `+` | 2.2.0 | Finds artists by name or YouTube channel ID and adds their missing tracks to the collection. | [YouTube-Music-Alfredo-Import.html](installers/YouTube-Music-Alfredo-Import.html) |
 | YouTube Music | **Random Songs** `⤨` | 2.1.1 | Builds a new private listening playlist from distinct eligible songs across the collection. | [YouTube-Music-Alfredo-Collection.html](installers/YouTube-Music-Alfredo-Collection.html) |
 | YouTube Music | **List Artists** `≡` | 2.2.0 | Lists artists and distinct track counts, then subscribes you to the artists who meet the threshold. | [YouTube-Music-Alfredo-Artists.html](installers/YouTube-Music-Alfredo-Artists.html) |
 | YouTube Music | **Delete Duplicates** `⌫` | 1.0.3 | Finds repeated video IDs and removes the extra playlist entries you select, or keeps the first automatically. | [YouTube-Music-Alfredo-Delete-Duplicates.html](installers/YouTube-Music-Alfredo-Delete-Duplicates.html) |
@@ -34,7 +34,17 @@ The five Music tools recognize playlists visible in your selected account's Musi
 
 Any account can use this naming convention. For a new collection, start with **Add Songs**. When it has tracks to add and finds no matching playlist, it creates the private playlist `Alfredo's __I__` for you.
 
-**Bring in music.** Open Add Songs, enter comma-separated artist names such as `Count Basie, Artie Shaw`, and click **Add missing songs**. Inspect the linked profiles when several artists share a name. You can accept or exclude each one separately. The importer follows albums, singles, and EPs, checks for IDs already present anywhere in the collection, and fills eligible editable playlists. A destination must start with at least 500 free slots and can then fill to 5,000 entries. When another destination is needed, the importer creates the next numbered private playlist. Artist choices and interrupted additions are remembered for this account in this browser.
+**Bring in music.** Open Add Songs and enter artist names, YouTube channel IDs, or both. Separate entries with commas or line breaks, then click **Add missing songs**.
+
+```text
+Count Basie, UCPzoHRR53Gi5pT8kHU9FptQ, "Earth, Wind & Fire"
+```
+
+Use double quotes around a name that contains a comma. To include a quotation mark inside a quoted name, double it. For a channel ID, copy the part after `/channel/` in an artist's URL. Paste the ID without quotes and keep its capitalization. Add Songs recognizes uppercase `UC` followed by exactly 22 letters (A–Z or a–z), digits, underscores, or hyphens. If an artist's literal name has that exact shape, put it in double quotes to search for the name.
+
+A name search can find several artists with the same name. Inspect the linked profiles and choose which to include. A channel ID selects the verified YouTube Music artist directly, even if you previously excluded that profile in a name search. The selection applies to this run and preserves the saved name choice. The results show the artist's name beside the submitted ID. **Requested inputs** counts the distinct names and IDs you entered. **Matched artists** counts an artist once even if you entered both their name and their ID. When an ID cannot be resolved to a Music artist, the panel reports it and continues with the other entries. A verified artist can also have zero eligible tracks.
+
+The importer follows albums, singles, and EPs. If two profiles in your results share a name, a linked artist credit can identify which one owns a recording. A credit that gives only their shared name is skipped. The importer checks for video IDs already present anywhere in the collection and fills eligible editable playlists. A destination must start with at least 500 free slots and can then fill to 5,000 entries. When another destination is needed, the importer creates the next numbered private playlist. Artist choices and interrupted additions are remembered for this account in this browser.
 
 **Make a listening playlist.** Open Random Songs, choose a title and count, and click **Create playlist**. For a 2,000-song sample with a 1% artist limit, the initial allowance is 20 songs per artist. Collaborations count against each credited artist's allowance. If there are enough eligible tracks but the quotas prevent a full sample, the tool can relax the quotas to fill it. A dislike found on any source copy excludes that video ID. The default request is 200 songs with a 1% artist limit. Playback checks are off by default for this collection-wide scan.
 

@@ -1,4 +1,4 @@
-/* Add Songs 2.1.1 — self-contained; append-only collection updates. */
+/* Add Songs 2.2.0 — self-contained; append-only collection updates. */
 function makeCollectionImporterCore(deps) {
   'use strict';
   const fail = (message) => {
@@ -619,33 +619,71 @@ function makeCollectionImporterCore(deps) {
   }
   const validId = (id) => typeof id === 'string' && /^[A-Za-z0-9_-]{11}$/.test(id);
 
-  function parseNames(input) {
-    const names = [],
+  function parseInputs(input) {
+    const entries = [],
       seen = new Set();
     let token = '',
-      quoted = false;
+      inQuotes = false,
+      hadQuotes = false;
     const add = () => {
-      const name = cleanName(token);
+      // Test the original spelling before Unicode normalization or case folding.
+      const raw = token.trim();
+      const kind = !hadQuotes && /^UC[A-Za-z0-9_-]{22}$/.test(raw) ? 'channelId' : 'name';
+      const value = kind === 'channelId' ? raw : cleanName(raw);
+      const key = kind + ':' + (kind === 'channelId' ? value : nameKey(value));
       token = '';
-      if (name && !seen.has(nameKey(name))) {
-        seen.add(nameKey(name));
-        names.push(name);
+      hadQuotes = false;
+      if (value && !seen.has(key)) {
+        seen.add(key);
+        entries.push({ kind, value });
       }
     };
-    for (let i = 0; i < String(input).length; i++) {
-      const ch = String(input)[i];
+    input = String(input);
+    for (let i = 0; i < input.length; i++) {
+      const ch = input[i];
       if (ch === '"') {
-        if (quoted && input[i + 1] === '"') {
+        hadQuotes = true;
+        if (inQuotes && input[i + 1] === '"') {
           token += '"';
           i++;
-        } else quoted = !quoted;
-      } else if ((ch === ',' || ch === '\n' || ch === '\r') && !quoted) add();
+        } else inQuotes = !inQuotes;
+      } else if ((ch === ',' || ch === '\n' || ch === '\r') && !inQuotes) add();
       else token += ch;
     }
-    if (quoted) fail('Close the quotation mark around the artist name.');
+    if (inQuotes) fail('Close the quotation mark around the artist name.');
     add();
-    if (!names.length) fail('Enter at least one artist.');
-    return names;
+    if (!entries.length) fail('Enter at least one artist name or channel ID.');
+    return entries;
+  }
+
+  // Only explicit ID aliases join profiles. A third profile can connect two
+  // earlier groups. Keep every browse route and every verified display name.
+  function indexArtistProfiles(artists) {
+    const byAlias = new Map();
+    for (const artist of artists) {
+      const linked = new Set(artist.aliases.map((id) => byAlias.get(id)).filter(Boolean));
+      const profiles = [...linked, artist];
+      const group = {
+        ...profiles[0],
+        aliases: [...new Set(profiles.flatMap((p) => p.aliases))],
+        routes: [...new Set(profiles.flatMap((p) => p.routes))],
+        names: [...new Set(profiles.flatMap((p) => p.names || [p.name]))],
+        samples: [...new Set(profiles.flatMap((p) => p.samples))].slice(0, 3)
+      };
+      for (const id of group.aliases) byAlias.set(id, group);
+    }
+    return byAlias;
+  }
+
+  function ambiguousCreditNames(profileIndex) {
+    const seen = new Set(), ambiguous = new Set();
+    for (const profile of new Set(profileIndex.values())) {
+      for (const name of new Set(profile.names.map(nameKey))) {
+        if (seen.has(name)) ambiguous.add(name);
+        seen.add(name);
+      }
+    }
+    return ambiguous;
   }
 
   function primary(json) {
@@ -750,6 +788,95 @@ function makeCollectionImporterCore(deps) {
       await walk(shelf, { query: name, params: 'EgWKAQIgAWoMEA4QChADEAQQCRAF' }, 'contents', consume, 'search');
     return [...matches.values()];
   }
+
+  function inspectArtistPage(id, json) {
+    const top = json?.header || {};
+    const header =
+      top.musicImmersiveHeaderRenderer || top.musicVisualHeaderRenderer ||
+      top.musicHeaderRenderer || top.musicResponsiveHeaderRenderer;
+    const channels = find(header?.subscriptionButton, 'subscribeButtonRenderer')
+      .map((button) => artistId(button.channelId))
+      .filter((channel) => /^UC[A-Za-z0-9_-]+$/.test(channel || ''));
+    const aliases = new Set([id]);
+    if (channels.length && channels.every((channel) => channel === channels[0])) aliases.add(channels[0]);
+    // Ordinary Music users can also have a visual header, a title and subscribers.
+    // For a shared header layout require a self-link explicitly identifying an artist
+    // or the artist's own release-list endpoint on a primary shelf.
+    const tabs = json?.contents?.singleColumnBrowseResultsRenderer?.tabs ||
+      json?.contents?.twoColumnBrowseResultsRenderer?.tabs;
+    const tab = tabs?.find((entry) => entry.tabRenderer?.selected)?.tabRenderer;
+    const tabEndpoint = tab?.endpoint?.browseEndpoint;
+    const selfLinks = [tabEndpoint, browseEndpoint(header), ...find(header?.title, 'browseEndpoint')]
+      .filter((e) => artistId(e?.browseId) === id);
+    const userChannel = selfLinks.some((e) => pageType(e) === 'MUSIC_PAGE_TYPE_USER_CHANNEL');
+    let confirmed = !!top.musicImmersiveHeaderRenderer ||
+      selfLinks.some((e) => pageType(e) === 'MUSIC_PAGE_TYPE_ARTIST');
+    const root = primary(json);
+    const primaryShelves = (root?.sectionListRenderer?.contents || [root])
+      .map((section) => section?.musicCarouselShelfRenderer);
+    const samples = [];
+    for (const shelf of find(root, 'musicCarouselShelfRenderer')) {
+      const heading =
+        shelf.header?.musicCarouselShelfBasicHeaderRenderer || shelf.header?.musicCarouselShelfHeaderRenderer;
+      const title = cleanName(textOf(heading?.title));
+      if (!/^(?:albums?|singles?(?:\s*(?:&|and)\s*eps?)?|eps?|releases?)$/i.test(title))
+        continue;
+      if (!confirmed && primaryShelves.includes(shelf))
+        confirmed = find(heading, 'browseEndpoint').some(
+          (e) => e?.browseId === 'MPAD' + id || (artistId(e?.browseId) === id && e?.params)
+        );
+      for (const item of shelf.contents || []) {
+        const card = item.musicTwoRowItemRenderer || item.musicResponsiveListItemRenderer;
+        if (/^MPRE/.test(cardEndpoint(card)?.browseId || '')) {
+          const title = cleanName(cardTitle(card));
+          if (title && !samples.includes(title) && samples.length < 3) samples.push(title);
+        }
+      }
+    }
+    const name = confirmed && !userChannel ? cleanName(textOf(header?.title)) : '';
+    if (name) {
+      // The canonical URL may also be a handle. Only an exact channel URL supplies an ID.
+      const canonical = /^https:\/\/music\.youtube\.com\/channel\/(UC[A-Za-z0-9_-]{22})\/?$/
+        .exec(json?.microformat?.microformatDataRenderer?.urlCanonical);
+      if (canonical) aliases.add(canonical[1]);
+      const tabId = artistId(tabEndpoint?.browseId);
+      if (pageType(tabEndpoint) === 'MUSIC_PAGE_TYPE_ARTIST' && /^UC[A-Za-z0-9_-]{22}$/.test(tabId || ''))
+        aliases.add(tabId);
+    }
+    return { name, aliases: [...aliases], samples };
+  }
+
+  async function resolveChannelId(id) {
+    let json;
+    try {
+      json = await artistPage(id);
+    } catch (e) {
+      if (mustStop(e)) throw e;
+      const status = e?.httpStatus;
+      if (status === 404 || status === 410) fail('Channel ID not found.');
+      if (
+        status === 408 || status === 429 || (status >= 500 && status < 600) ||
+        e?.name === 'AbortError' || e?.name === 'TypeError' || e?.retryable === true
+      )
+        fail('Temporary channel lookup failure · ' + e.message);
+      throw e;
+    }
+    const alert = json?.alerts?.map((a) => a.alertRenderer || a.alertWithButtonRenderer)
+      .find((a) => a?.type === 'ERROR' || (!json?.header && textOf(a?.text)));
+    if (alert) {
+      artistPages.delete(id);
+      fail('Channel lookup failed · ' + (textOf(alert.text) || 'YouTube Music returned an error.'));
+    }
+    const profile = inspectArtistPage(id, json);
+    if (!profile.name) {
+      artistPages.delete(id);
+      fail(json?.header || json?.metadata?.channelMetadataRenderer
+        ? 'No identifiable YouTube Music artist profile for this channel ID.'
+        : 'Channel ID could not be resolved to a YouTube Music artist profile.');
+    }
+    return { id, input: id, kind: 'channelId', routes: [id], ...profile };
+  }
+
   async function resolveArtist(name) {
     const matches = await searchArtist(name);
     let cursor = 0;
@@ -759,58 +886,16 @@ function makeCollectionImporterCore(deps) {
         const artist = matches[cursor++];
         artist.samples = [];
         try {
-          const json = await artistPage(artist.id);
-          const headers = [
-            'musicImmersiveHeaderRenderer',
-            'musicVisualHeaderRenderer',
-            'musicHeaderRenderer'
-          ].flatMap((k) => find(json.header, k));
-          const channels = [
-            ...new Set(
-              headers
-                .flatMap((h) => find(h.subscriptionButton, 'subscribeButtonRenderer'))
-                .map((s) => artistId(s.channelId))
-                .filter((id) => /^UC[A-Za-z0-9_-]+$/.test(id || ''))
-            )
-          ];
-          if (channels.length === 1) artist.aliases.push(channels[0]);
-          for (const shelf of find(primary(json), 'musicCarouselShelfRenderer')) {
-            const header =
-              shelf.header?.musicCarouselShelfBasicHeaderRenderer ||
-              shelf.header?.musicCarouselShelfHeaderRenderer;
-            if (
-              !/^(?:albums?|singles?(?:\s*(?:&|and)\s*eps?)?|eps?|releases?)$/i.test(
-                cleanName(textOf(header?.title))
-              )
-            )
-              continue;
-            for (const item of shelf.contents || []) {
-              const r = item.musicTwoRowItemRenderer || item.musicResponsiveListItemRenderer;
-              if (/^MPRE/.test(cardEndpoint(r)?.browseId || '')) {
-                const title = cleanName(cardTitle(r));
-                if (title && !artist.samples.includes(title) && artist.samples.length < 3)
-                  artist.samples.push(title);
-              }
-            }
-          }
+          const profile = inspectArtistPage(artist.id, await artistPage(artist.id));
+          artist.aliases = profile.aliases;
+          artist.samples = profile.samples;
+          if (profile.name && profile.name !== artist.name) artist.names = [artist.name, profile.name];
         } catch (e) {
           if (mustStop(e)) throw e;
         }
       }
     });
-    const groups = [];
-    for (const artist of matches) {
-      const linked = groups.filter((g) => g.aliases.some((id) => artist.aliases.includes(id)));
-      if (!linked.length) {
-        groups.push(artist);
-        continue;
-      }
-      const group = linked[0];
-      group.aliases = [...new Set([...group.aliases, ...artist.aliases, ...linked.flatMap((g) => g.aliases)])];
-      group.routes = [...new Set([...group.routes, ...artist.routes, ...linked.flatMap((g) => g.routes)])];
-      group.samples = [...new Set([...group.samples, ...artist.samples])].slice(0, 3);
-      for (const merged of linked.slice(1)) groups.splice(groups.indexOf(merged), 1);
-    }
+    const groups = [...new Set(indexArtistProfiles(matches).values())];
     const saved = choices.get(nameKey(name)),
       legacy = saved?.id && groups.some((a) => a.aliases.includes(saved.id));
     for (const artist of groups) {
@@ -909,9 +994,8 @@ function makeCollectionImporterCore(deps) {
     const byId = artists.filter((a) => (a.aliases || [a.id]).includes(artistId(credit.id)));
     if (byId.length === 1) return byId[0];
     if (credit.id) return null;
-    const byName = artists.filter(
-      (a) => nameKey(a.name) === nameKey(credit.name) || nameKey(a.input) === nameKey(credit.name)
-    );
+    const creditName = nameKey(credit.name);
+    const byName = artists.filter((a) => (a.creditNames || [nameKey(a.name)]).includes(creditName));
     return byName.length === 1 ? byName[0] : null;
   }
   async function collectSongs(artists, albums) {
@@ -979,7 +1063,7 @@ function makeCollectionImporterCore(deps) {
     }
     await workers(Math.min(3, queue.length), worker);
     for (const artist of artists)
-      deps.onArtist?.(artist.input, { state: 'Found', artist, count: counts.get(artist.id).size });
+      deps.onArtist?.(artist.input, { state: 'Found', artist, count: counts.get(artist.id).size }, artist.kind);
     return [...songs.values()];
   }
   async function scanCollection() {
@@ -1269,22 +1353,22 @@ function makeCollectionImporterCore(deps) {
     return confirmCreation(pending, collection);
   }
 
-  function warn(name, message) {
-    job.result.warnings.push(name + ': ' + message);
-    deps.onArtist?.(name, { state: 'Warning', message });
-    deps.warning?.(name + ': ' + message);
+  function warn(input, message, kind) {
+    job.result.warnings.push(input + ': ' + message);
+    deps.onArtist?.(input, { state: 'Warning', message }, kind);
+    deps.warning?.(input + ': ' + message);
   }
   async function importArtists(artists) {
     const { collection, result, catalogIds } = job,
       albums = new Set();
     for (const artist of artists) {
       checkpoint();
-      deps.onArtist?.(artist.input, { state: 'Reading releases', artist });
+      deps.onArtist?.(artist.input, { state: 'Reading releases', artist }, artist.kind);
       try {
         await artistCatalog(artist, albums);
       } catch (e) {
         if (mustStop(e)) throw e;
-        warn(artist.input, 'Artist catalog could not be read; continuing.');
+        warn(artist.input, 'Artist catalog could not be read; continuing.', artist.kind);
       }
     }
     const songs = (await collectSongs(artists, albums)).filter((s) => !catalogIds.has(s.id));
@@ -1341,16 +1425,18 @@ function makeCollectionImporterCore(deps) {
   async function drainChoices() {
     while (job.queue.length) {
       const artists = [];
-      for (const artist of job.queue.splice(0)) {
-        const ids = artist.aliases || [artist.id];
-        if (ids.some((id) => job.seenArtists.has(id))) {
-          deps.onArtist?.(artist.input, { state: 'Already included', artist });
+      for (const candidate of job.queue.splice(0)) {
+        const profile = job.profileIndex.get(candidate.id);
+        if (job.included.has(profile)) {
+          deps.onArtist?.(candidate.input, { state: 'Already included', artist: candidate }, candidate.kind);
           continue;
         }
-        for (const id of ids) job.seenArtists.add(id);
-        artists.push(artist);
-        job.result.matched++;
+        job.included.add(profile);
+        // Pending and excluded namesakes still make an unlinked credit ambiguous.
+        const creditNames = profile.names.map(nameKey).filter((name) => !job.ambiguousNames.has(name));
+        artists.push({ ...candidate, aliases: profile.aliases, routes: profile.routes, creditNames });
       }
+      job.result.matched = job.included.size;
       if (artists.length) await importArtists(artists);
     }
     checkpoint();
@@ -1365,17 +1451,51 @@ function makeCollectionImporterCore(deps) {
     job.resumable = true;
     return result;
   }
+
+  async function resolveInput({ kind, value }) {
+    const direct = kind === 'channelId';
+    deps.onArtist?.(value, { state: direct ? 'Looking up channel ID' : 'Searching' }, kind);
+    say((direct ? 'Looking up channel ID: ' : 'Finding artist: ') + value);
+    try {
+      if (direct) {
+        const artist = await resolveChannelId(value);
+        job.queue.push(artist);
+        deps.onArtist?.(value, { state: 'Artist confirmed', artist }, kind);
+        return [artist];
+      }
+      const matches = await resolveArtist(value);
+      if (!matches.length) {
+        warn(value, 'No exact artist match; skipped.', kind);
+      } else if (matches.length > 1 || choices.has(nameKey(value))) {
+        unresolved.set(nameKey(value), matches);
+        showChoices(value, matches);
+        job.queue.push(...matches.filter((a) => a.use === true));
+      } else {
+        job.queue.push(matches[0]);
+      }
+      return matches;
+    } catch (e) {
+      if (mustStop(e)) throw e;
+      const message = direct
+        ? e?.message || 'Channel lookup failed.'
+        : 'Artist catalog could not be read; continuing.';
+      warn(value, message, kind);
+      return [];
+    }
+  }
+
   async function run(input) {
-    const names = parseNames(input);
+    const inputs = parseInputs(input);
+    const profiles = [];
     artistPages.clear();
     unresolved.clear();
     job = {
       queue: [],
-      seenArtists: new Set(),
+      included: new Set(),
       catalogIds: new Set(),
       resumable: false,
       result: {
-        requested: names.length,
+        requested: inputs.length,
         matched: 0,
         found: 0,
         existing: 0,
@@ -1387,6 +1507,7 @@ function makeCollectionImporterCore(deps) {
       }
     };
     checkpoint();
+    deps.summary?.(job.result);
     // A newly discovered source whose read failed makes the snapshot incomplete.
     if (collectionCache?.sources.some((s) => !Number.isSafeInteger(s.count) || typeof s.owned !== 'boolean'))
       collectionCache = null;
@@ -1409,34 +1530,20 @@ function makeCollectionImporterCore(deps) {
     }
     job.collection = collectionCache;
     await reconcile(deps.loadPending?.(), job.collection, job.result);
-    for (const name of names) {
+    for (const entry of inputs) {
       checkpoint();
-      deps.onArtist?.(name, { state: 'Searching' });
-      say('Finding artist: ' + name);
-      try {
-        const matches = await resolveArtist(name);
-        if (!matches.length) {
-          warn(name, 'No exact artist match; skipped.');
-          continue;
-        }
-        if (matches.length > 1 || choices.has(nameKey(name))) {
-          unresolved.set(nameKey(name), matches);
-          showChoices(name, matches);
-          job.queue.push(...matches.filter((a) => a.use === true));
-          continue;
-        }
-        job.queue.push(matches[0]);
-      } catch (e) {
-        if (mustStop(e)) throw e;
-        warn(name, 'Artist catalog could not be read; continuing.');
-      }
+      profiles.push(...(await resolveInput(entry)));
     }
+    // Choices can be accepted later. Index every verified relationship before
+    // importing so an alias discovered by a pending name retains its catalog.
+    job.profileIndex = indexArtistProfiles(profiles);
+    job.ambiguousNames = ambiguousCreditNames(job.profileIndex);
     const result = await drainChoices();
     job.resumable = true;
     return result;
   }
   return {
-    parseNames,
+    parseInputs,
     roman,
     matchTitle,
     discover,
@@ -1678,32 +1785,33 @@ function launchMusicCollectionImporter(makeCore) {
       'aria-modal': 'true',
       'aria-labelledby': 'import-title'
     });
-  el('div', box, 'ALFREDO COLLECTION / YOUTUBE MUSIC · 2.1.1', { class: 'eyebrow' });
+  el('div', box, 'ALFREDO COLLECTION / YOUTUBE MUSIC · 2.2.0', { class: 'eyebrow' });
   el('h1', box, 'Add Songs', { id: 'import-title' });
   el(
     'p',
     box,
-    'Missing tracks are added to the collection. Only playlists with at least 500 free slots are selected for additions; selected playlists can fill to 5,000 entries.'
+    'Missing tracks go into collection playlists with at least 500 free slots. Once selected, a playlist can fill to 5,000 entries.'
   );
   el(
     'p',
     box,
-    'Failed reads retry twice. Completed collection data is reused and updated in this panel. Closing and reopening starts a fresh scan.',
+    'Temporary read failures can be retried. This panel reuses and updates a completed collection scan. Close and reopen it for a fresh scan.',
     { class: 'hint' }
   );
   const form = el('form', box);
-  el('label', form, 'Artists, separated by commas', { for: 'import-artists' });
+  el('label', form, 'Artist names or YouTube channel IDs', { for: 'import-artists' });
   const input = el('textarea', form, '', {
     id: 'import-artists',
-    placeholder: 'Artist 1, Artist 2, Artist 3.',
+    placeholder: 'Count Basie, UCPzoHRR53Gi5pT8kHU9FptQ, "Earth, Wind & Fire"',
+    'aria-describedby': 'import-input-hint',
     spellcheck: 'false',
     required: ''
   });
   el(
     'div',
     form,
-    'Extra spaces are ignored. Put names containing commas in double quotes, such as "Earth, Wind & Fire".',
-    { class: 'hint' }
+    'Separate entries with commas or line breaks. Paste channel IDs without quotes. Put artist names containing commas in double quotes.',
+    { class: 'hint', id: 'import-input-hint' }
   );
   const actions = el('div', form, '', { class: 'actions' }),
     start = el('button', actions, 'Add missing songs', { type: 'submit', class: 'primary' }),
@@ -1719,6 +1827,8 @@ function launchMusicCollectionImporter(makeCore) {
   const stats = el('div', box, '', { class: 'stats' }),
     values = {};
   for (const [key, title] of [
+    ['requested', 'Requested inputs'],
+    ['matched', 'Matched artists'],
     ['found', 'Catalog tracks found'],
     ['existing', 'Already in collection'],
     ['added', 'Tracks added']
@@ -1731,7 +1841,7 @@ function launchMusicCollectionImporter(makeCore) {
     class: 'warnings',
     role: 'note',
     tabindex: '0',
-    'aria-label': 'Not-found artists and other warnings'
+    'aria-label': 'Artist lookup and import warnings'
   });
   warnings.hidden = true;
   const savedSection = el('details', box),
@@ -1755,7 +1865,7 @@ function launchMusicCollectionImporter(makeCore) {
   el(
     'p',
     box,
-    'All collection playlists are scanned for duplicates. Equivalent artist IDs are combined. Each remaining candidate can be accepted or excluded independently; decisions are saved and other artists continue.',
+    'A channel ID selects its artist for this run. For a name shared by several artists, choose each profile you want to include. These name choices are saved for this account.',
     { class: 'hint' }
   );
   el(
@@ -1837,18 +1947,27 @@ function launchMusicCollectionImporter(makeCore) {
     }
   }
 
-  function onArtist(name, value) {
-    let node = artistNodes.get(name);
+  function onArtist(input, value, kind = 'name') {
+    const direct = kind === 'channelId',
+      key = kind + '\n' + input;
+    let node = artistNodes.get(key);
     if (!node) {
       const row = el('div', artistList, '', { class: 'row' });
       node = {
-        name: el('a', row, name, { target: '_blank', rel: 'noopener noreferrer' }),
+        name: el('a', row, direct ? 'Channel ID · ' + input : input, {
+          target: '_blank',
+          rel: 'noopener noreferrer'
+        }),
         state: el('small', row),
         choices: el('div', row)
       };
-      artistNodes.set(name, node);
+      artistNodes.set(key, node);
     }
-    if (value.artist) node.name.setAttribute('href', ORIGIN + '/browse/' + encodeURIComponent(value.artist.id));
+    // A merged artist can have several names. Keep the title verified for this specific ID.
+    if (value.artist && (!direct || !node.name.hasAttribute('href'))) {
+      node.name.setAttribute('href', ORIGIN + '/browse/' + encodeURIComponent(direct ? input : value.artist.id));
+      if (direct) node.name.textContent = value.artist.name + ' · ' + input;
+    }
     node.state.textContent =
       value.message ||
       value.state + (typeof value.count === 'number' ? ' · ' + value.count.toLocaleString() + ' tracks' : '');
@@ -1887,7 +2006,7 @@ function launchMusicCollectionImporter(makeCore) {
           choose.addEventListener('click', () => {
             try {
               checkAccount(false);
-              core.chooseArtist(name, artist.id, use);
+              core.chooseArtist(input, artist.id, use);
               if (stopped || (!running && !canResume)) node.state.textContent = 'Choice saved for the next start.';
               if (!running && canResume && !stopped) execute('resume');
             } catch (e) {
@@ -1992,7 +2111,7 @@ function launchMusicCollectionImporter(makeCore) {
     if (running || closed) return;
     if (mode === 'start') {
       try {
-        core.parseNames(input.value);
+        core.parseInputs(input.value);
       } catch (e) {
         status.textContent = e.message;
         input.focus();

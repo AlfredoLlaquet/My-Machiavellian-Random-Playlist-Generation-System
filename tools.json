@@ -3,12 +3,13 @@
     "id": "add-songs",
     "name": "Add Songs",
     "host": "music.youtube.com",
-    "version": "2.1.1",
+    "version": "2.2.0",
     "label": "+",
     "installer": "YouTube-Music-Alfredo-Import.html",
-    "summary": "Enter artists to add their missing tracks to your numbered collection playlists.",
+    "summary": "Enter artist names, YouTube channel IDs, or both to add missing tracks to your numbered collection playlists.",
     "notes": [
-      "Enter artist names separated by commas. When different channels share a name, the panel lets you choose which artist profiles to use.",
+      "Separate entries with commas or line breaks. Paste channel IDs without quotes. Put names containing commas in double quotes, such as \"Earth, Wind & Fire\". Quoting an ID-shaped name also searches for that literal name.",
+      "A name search lets you choose among artists who share a name. A channel ID selects its verified YouTube Music artist for this run. Multiple entries that identify the same artist count once.",
       "The importer compares video IDs across the collection. It fills eligible editable playlists in Roman numeral order and creates the next private playlist when it needs more room.",
       "A completed scan can be reused while the panel stays open. The tool updates its counts as it confirms additions."
     ]

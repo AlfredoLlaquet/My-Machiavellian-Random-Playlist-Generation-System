@@ -101,10 +101,39 @@ the entry identifier for the particular occurrence. Artist ownership,
 profile identity, track ID and playlist-entry ID serve different jobs.
 
 Add Songs
-  Account-specific artist choices may include or exclude multiple
-  profiles with the same name. Existing video IDs count across every
-  matching playlist. Import from eligible releases based on album
-  ownership or the main track artist of a Various Artists album.
+  Split input on commas and line breaks outside double quotes. Keep
+  doubled quotes inside a quoted name. Reject an unclosed quote before
+  scanning the collection. After trimming, a bare entry that matches
+  ^UC[A-Za-z0-9_-]{22}$ in full is a YouTube channel ID. A fully
+  double-quoted entry always requests a literal name search. Classify
+  before deduplicating. Compare normalized names case-insensitively.
+  IDs use their exact case-sensitive spelling.
+  Keep the input kind in result-row keys so a quoted name and an ID
+  with the same spelling can report independent outcomes.
+
+  Names use exact-name search and the account's saved profile choices.
+  Browse a submitted channel ID directly in the signed-in Music session.
+  Confirm an artist profile before using its name, link or catalog.
+  An explicit ID selects that artist for this run, including a profile
+  excluded under a saved name. Only name decisions change saved choices.
+  Report an unsuccessful ID lookup against that ID and continue with
+  other entries. Report temporary failures when identifiable. An artist
+  with zero eligible tracks still counts as a match. An ID lookup
+  never falls back to name search.
+
+  Count distinct requested inputs separately from distinct matched
+  artists. Merge profiles only on identity evidence from YouTube Music.
+  Preserve each confirmed catalog route when an artist has aliases,
+  including when a name decision arrives after direct-ID processing.
+  Index all resolved candidates before importing or resuming a name
+  choice. A text-only album or track credit can identify an artist
+  only when its display name is unique among those profiles. Pending
+  or excluded namesakes also make that credit ambiguous. A linked
+  credit can distinguish the artists by ID.
+
+  Existing video IDs count across every matching playlist. Import from
+  eligible releases based on album ownership or the main track artist
+  of a Various Artists album.
   Destination playlists must be editable and have at least 500 free
   slots when selected. An active one may fill to 5,000 entries.
   Create a private playlist with the next numeral when required. Retain
@@ -236,6 +265,12 @@ embedded runtime until replaced.
 
 For changes to a write path, exercise normal, interrupted and resumed
 operations with offline fixtures and record the requested target IDs.
+For Add Songs, exercise a mixed list in both orders, a quoted ID-shaped
+name, case-distinct IDs, a confirmed alias with its own catalog route,
+and different artists with the same name. Check that an IDs-only run
+issues zero name searches and that an explicit ID leaves a saved name
+exclusion intact. Cover empty artists, unsuccessful lookups, pending
+name choices, cancellation, account changes and interrupted additions.
 For each sampler, verify that malformed creation results or saved records
 cannot point writes at a source, even when a destination already contains
 items. For the copier, test account isolation, destination changes and the
