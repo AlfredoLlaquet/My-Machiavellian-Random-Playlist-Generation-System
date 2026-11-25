@@ -1,5 +1,7 @@
 # My Machiavellian Random-Playlist-Generation System
 
+Programmed by **ChatGPT** for Alfredo Llaquet-Alsina.
+
 Alfredo Llaquet-Alsina built his YouTube Music collection across a series of numbered playlists. He wanted to enter an artist's name, add the recordings he was missing, then draw a fresh listening playlist from the entire collection. **Add Songs** and **Random Songs** do those two jobs. Five companion bookmarklets count artists, remove duplicate entries, like unrated songs, sample a regular YouTube playlist, and copy videos between playlists.
 
 Each tool has its own self-contained Firefox installer. Install the ones you use. A click on the bookmark opens its controls on the corresponding YouTube site, using the account already selected in that tab.
