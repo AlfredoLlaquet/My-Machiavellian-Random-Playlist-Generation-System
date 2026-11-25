@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Random Sample · YouTube bookmarklet</title>
+  <style>
+    :root { color-scheme: light dark; font: 17px/1.55 system-ui, sans-serif; color: #223427; background: #faf9f4; }
+    body { margin: 0; }
+    main { width: min(44rem, calc(100% - 3rem)); margin: 3rem auto; }
+    h1, h2 { line-height: 1.15; }
+    h1 { font-size: clamp(2.1rem, 7vw, 3.6rem); margin: .3rem 0 .6rem; }
+    h2 { font-size: 1.35rem; margin: 1.7rem 0 .55rem; }
+    p { margin: .6rem 0; }
+    .meta { font-weight: 650; }
+    .install { margin: 1.6rem 0; padding: .3rem 1.25rem 1.1rem; border: 1px solid #b5c7b7; border-radius: .5rem; background: #eff3eb; }
+    .install h2 { margin: .8rem 0 .4rem; }
+    #bookmark { display: inline-block; min-width: 2.4rem; padding: .18rem .6rem; text-align: center; border-radius: .35rem; background: #235638; color: white; text-decoration: none; font-size: 1.45rem; font-weight: 700; vertical-align: middle; }
+    details { margin: 1rem 0; border-block-start: 1px solid #b5c7b7; padding-top: .75rem; }
+    summary { cursor: pointer; font-weight: 650; }
+    button { font: inherit; padding: .32rem .7rem; cursor: pointer; }
+    textarea, pre { box-sizing: border-box; width: 100%; padding: .6rem; font: .84rem/1.45 ui-monospace, monospace; }
+    textarea { resize: vertical; }
+    pre { overflow: auto; max-height: 22rem; }
+    li { margin-bottom: .4rem; }
+    :focus-visible { outline: 3px solid #3779b5; outline-offset: 3px; }
+    @media (prefers-color-scheme: dark) {
+      :root { color: #e6eee7; background: #17231b; }
+      .install { background: #223528; border-color: #597360; }
+      #bookmark { background: #b1dfbc; color: #15271a; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="meta">YouTube · Version 1.0.1</p>
+    <h1>Random Sample</h1>
+    <p>Sample a chosen number of distinct videos from one YouTube playlist into a new private playlist.</p>
+  </header>
+  <section class="install">
+    <h2>Install in Firefox</h2>
+    <p>Drag <a id="bookmark" draggable="true" href="javascript:void%20function()%7Bfunction%20e(e)%7B%22use%20strict%22;const%20t=e=%3E%7Bthrow%20new%20Error(e)%7D;const%20n=()=%3E%7Bif(e.cancelled%3F.())t(%22Stopped.%22)%7D;const%20i=t=%3Ee.progress%3F.(t);const%20o=e=%3Etypeof%20e===%22string%22%3Fe:e%3F.simpleText%7C%7Ce%3F.runs%3F.map(e=%3Ee.text%7C%7C%22%22).join(%22%22)%7C%7C%22%22;function%20s(e,t,n=%5B%5D)%7Bif(!e%7C%7Ctypeof%20e!==%22object%22)return%20n;if(Object.prototype.hasOwnProperty.call(e,t))n.push(e%5Bt%5D);for(const%20i%20of%20Object.values(e))s(i,t,n);return%20n%7Dfunction%20a(e)%7Blet%20n=String(e).trim();if(/%5Ehttps%3F:%5C/%5C//i.test(n))%7Bconst%20e=new%20URL(n);if(!%5B%22youtube.com%22,%22www.youtube.com%22,%22music.youtube.com%22,%22m.youtube.com%22,%22youtu.be%22%5D.includes(e.hostname))t(%22Use%20a%20YouTube%20playlist%20address.%22);n=e.searchParams.get(%22list%22)%7C%7C%22%22%7Dif(!/%5E%5BA-Za-z0-9_-%5D%7B2,150%7D%24/.test(n))t(%22Enter%20a%20playlist%20address%20containing%20list=,%20or%20a%20playlist%20ID.%22);if(n.startsWith(%22RD%22))t(%22YouTube%20Mixes%20change%20as%20they%20play.%20Choose%20a%20saved%20playlist%20with%20a%20fixed%20video%20list.%22);return%20n%7Dfunction%20r(e)%7Bconst%20n=%5B%5D,i=%5B%5D;if(!Array.isArray(e.contents))t(%22YouTube%20returned%20an%20unfamiliar%20playlist%20layout.%20Nothing%20further%20was%20changed.%22);for(const%20a%20of%20e.contents)%7Bif(a.playlistVideoRenderer)%7Bconst%20e=a.playlistVideoRenderer;const%20t=e.videoId%7C%7C%22%22;const%20i=o(e.title);const%20s=e.navigationEndpoint%3F.watchEndpoint;const%20r=!/%5E%5BA-Za-z0-9_-%5D%7B11%7D%24/.test(t)%7C%7Ce.isPlayable===false%7C%7C/%5E(%5C%5B%3F)(private%20video%7Cdeleted%20video%7Cunavailable%20video)(%5C%5D%3F)%24/i.test(i.trim())%7C%7Ce.isPlayable!==true%26%26s%3F.videoId!==t;n.push(%7Bid:t,title:i%7C%7Ct,available:!r%7D)%7Delse%20if(a.continuationItemRenderer)%7Bconst%20e=s(a.continuationItemRenderer,%22continuationCommand%22);if(!e.length%7C%7Ce.some(e=%3E!e.token))t(%22The%20playlist%20continuation%20could%20not%20be%20read.%22);i.push(...e.map(e=%3Ee.token))%7Delse%20if(!a.messageRenderer)%7Bt(%22YouTube%20returned%20an%20unsupported%20playlist%20entry.%20Stopped%20to%20avoid%20sampling%20an%20incomplete%20list.%22)%7D%7Dfor(const%20n%20of%20e.continuations%7C%7C%5B%5D)%7Bconst%20e=n.nextContinuationData%3F.continuation;if(!e)t(%22An%20unsupported%20continuation%20was%20returned.%22);i.push(e)%7Dconst%20a=%5B...new%20Set(i)%5D;if(a.length%3E1)t(%22The%20playlist%20returned%20ambiguous%20pagination.%20Nothing%20further%20was%20changed.%22);return%7Brows:n,next:a%5B0%5D%7C%7Cnull%7D%7Dasync%20function%20l(a,l=%22Reading%20source%22)%7Bn();let%20c=await%20e.post(%22browse%22,%7BbrowseId:%22VL%22%2Ba%7D);const%20d=s(c.alerts,%22alertRenderer%22).filter(e=%3Ee.type===%22ERROR%22);if(d.length)t(o(d%5B0%5D.text)%7C%7C%22YouTube%20could%20not%20open%20this%20playlist.%22);const%20u=s(c.contents,%22playlistVideoListRenderer%22).filter(e=%3E!e.playlistId%7C%7Ce.playlistId===a);if(u.length!==1)t(%22The%20playlist%20could%20not%20be%20read.%20Check%20the%20address%20and%20access%20in%20the%20selected%20YouTube%20account.%22);let%20p=u%5B0%5D;const%20f=p.targetId%7C%7C%22playlist-video-list%22;const%20h=%5B%5D,y=new%20Set;for(let%20o=0;o%3C1e3;o%2B%2B)%7Bn();const%20o=r(p);h.push(...o.rows);i(l%2B%22:%20%22%2Bh.length.toLocaleString()%2B%22%20entries%22);if(!o.next)return%20h;if(y.has(o.next))t(%22YouTube%20repeated%20a%20playlist%20page.%20Stopped%20to%20avoid%20an%20incomplete%20sample.%22);y.add(o.next);c=await%20e.post(%22browse%22,%7Bcontinuation:o.next%7D);const%20a=c.continuationContents%3F.playlistVideoListContinuation;if(a)%7Bp=a;continue%7Dconst%20d=%5B...s(c.onResponseReceivedActions,%22appendContinuationItemsAction%22),...s(c.onResponseReceivedEndpoints,%22appendContinuationItemsAction%22),...s(c.onResponseReceivedCommands,%22appendContinuationItemsAction%22)%5D;let%20u=d.filter(e=%3Ee.targetId===f);if(!u.length)u=d.filter(e=%3E!e.targetId%26%26Array.isArray(e.continuationItems));if(u.length!==1)t(%22The%20next%20playlist%20page%20could%20not%20be%20identified.%20Nothing%20further%20was%20changed.%22);p=%7Bcontents:u%5B0%5D.continuationItems%7D%7Dt(%22The%20playlist%20did%20not%20finish%20loading.%20Nothing%20further%20was%20changed.%22)%7Dfunction%20c(e)%7Bconst%20t=new%20Map;let%20n=0,i=0;for(const%20o%20of%20e)%7Bif(!o.available)%7Bn%2B%2B;continue%7Dif(t.has(o.id))%7Bi%2B%2B;continue%7Dt.set(o.id,o)%7Dreturn%7Bvideos:%5B...t.values()%5D,unavailable:n,duplicates:i%7D%7Dfunction%20d(t)%7Bconst%20n=t.slice();for(let%20t=n.length-1;t%3E0;t--)%7Bconst%20i=e.randomInt(t%2B1);%5Bn%5Bt%5D,n%5Bi%5D%5D=%5Bn%5Bi%5D,n%5Bt%5D%5D%7Dreturn%20n%7Dfunction%20u(e)%7Bconst%20n=e.playabilityStatus;if(!n%7C%7C!n.status)t(%22YouTube%20did%20not%20return%20a%20playback%20result.%20Nothing%20was%20created.%22);if(n.status===%22OK%22)return%20true;const%20i=%5Bn.reason%7C%7C%22%22,...s(n,%22reason%22).map(o),...s(n,%22subreason%22).map(o)%5D.join(%22%20%22);if(/confirm.*not%20a%20bot%7Cunusual%20traffic%7Cautomated%7Ctoo%20many%20requests/i.test(i))t(%22YouTube%20blocked%20the%20playback%20checks.%20Open%20a%20video%20normally,%20then%20run%20the%20tool%20again.%20Nothing%20was%20created.%22);if(n.status===%22LIVE_STREAM_OFFLINE%22)return%20false;if(%5B%22ERROR%22,%22UNPLAYABLE%22,%22LOGIN_REQUIRED%22%5D.includes(n.status)%26%26/private%7Cdeleted%7Cremoved%7Cunavailable%7Cnot%20available%7Cnot%20exist%7Ccopyright%7Cblocked%7Cterminated%7Cmembers.only%7Cjoin%20this%20channel%7Cpurchase%7Crent%20this/i.test(i))return%20false;t(%22Playback%20could%20not%20be%20confirmed%20(%22%2Bn.status%2B%22).%20%22%2B(i.trim()%7C%7C%22YouTube%20supplied%20no%20reason.%22)%2B%22%20Nothing%20was%20created.%20The%20faster%20mode%20can%20use%20playlist%20availability%20flags%20instead.%22)%7Dasync%20function%20p(o,s,a)%7Bconst%20r=c(o);if(r.videos.length%3Cs)t(%22Only%20%22%2Br.videos.length%2B%22%20distinct%20eligible%20videos%20were%20found;%20%22%2Bs%2B%22%20were%20requested.%20Nothing%20was%20created.%22);const%20l=d(r.videos),p=%5B%5D;let%20f=0,h=0;if(!a)return%7B...r,selected:l.slice(0,s),rejected:h%7D;for(let%20t=0;t%3Cl.length%26%26p.length%3Cs;)%7Bn();const%20o=l.slice(t,t%2BMath.min(3,s-p.length));t%2B=o.length;const%20a=await%20Promise.all(o.map(async%20t=%3Eu(await%20e.post(%22player%22,%7BvideoId:t.id%7D))));n();o.forEach((e,t)=%3E%7Bif(a%5Bt%5D)p.push(e);else%20h%2B%2B%7D);f%2B=o.length;i(%22Checking%20playback:%20%22%2Bp.length%2B%22%20of%20%22%2Bs%2B%22%20ready%20%5Cxb7%20%22%2Bf%2B%22%20checked%22)%7Dif(p.length!==s)t(%22Only%20%22%2Bp.length%2B%22%20videos%20passed%20playback%20checks;%20%22%2Bs%2B%22%20were%20requested.%20Nothing%20was%20created.%22);return%7B...r,selected:p,rejected:h%7D%7Dfunction%20f(e)%7Bif(!e%7C%7Ce.version!==1%7C%7Ca(e.source)!==e.source%7C%7C!Array.isArray(e.ids)%7C%7C!e.ids.length%7C%7Ce.ids.length%3E5e3%7C%7Ce.ids.some(e=%3E!/%5E%5BA-Za-z0-9_-%5D%7B11%7D%24/.test(e))%7C%7Cnew%20Set(e.ids).size!==e.ids.length%7C%7Ctypeof%20e.title!==%22string%22%7C%7C!e.title.trim()%7C%7C%5B...e.title%5D.length%3E150)t(%22The%20saved%20selection%20is%20invalid.%20Nothing%20was%20changed.%22);if(e.destination%26%26(!/%5E%5BA-Za-z0-9_-%5D%7B2,150%7D%24/.test(e.destination)%7C%7Ce.destination===e.source))t(%22The%20destination%20is%20invalid.%20Nothing%20was%20changed.%22)%7Dasync%20function%20h(n,i=false)%7Blet%20o;for(let%20s=0;s%3C3;s%2B%2B)%7Bif(s)await%20e.delay(750*s);try%7Bconst%20e=await%20l(n.destination,%22Checking%20new%20playlist%22);if(e.length%3En.ids.length%7C%7Ce.some((e,t)=%3Ee.id!==n.ids%5Bt%5D))t(%22The%20new%20playlist%20differs%20from%20the%20saved%20selection.%20Automatic%20changes%20stopped.%22);if(e.length%3C(n.confirmedCount%7C%7C0))t(%22YouTube%20has%20not%20exposed%20the%20last%20confirmed%20batch%20yet.%20Wait%20briefly%20before%20continuing%20the%20saved%20playlist.%22);if(i%26%26e.length!==n.ids.length)t(%22The%20new%20playlist%20currently%20contains%20%22%2Be.length%2B%22%20of%20%22%2Bn.ids.length%2B%22%20expected%20videos.%22);if(!e.length)t(%22The%20new%20playlist%20is%20not%20visible%20yet.%22);return%20e.length%7Dcatch(e)%7Bo=e%7D%7Dthrow%20o%7Dasync%20function%20y(o,s=false)%7Bf(o);if(!o.destination)t(%22The%20creation%20result%20is%20unknown.%20Check%20YouTube%20playlists%20before%20starting%20another%20copy.%22);n();let%20a=await%20h(o);if((s%7C%7Co.phase===%22created%22)%26%26a%3EMath.min(50,o.ids.length))t(%22Unexpected%20creation%20result.%20Automatic%20changes%20stopped.%22);while(a%3Co.ids.length)%7Bn();const%20s=o.ids.slice(a,a%2B50);i(%22Adding%20videos:%20%22%2Ba%2B%22%20of%20%22%2Bo.ids.length);e.save(%7B...o,phase:%22adding%22%7D);const%20r=await%20e.post(%22browse/edit_playlist%22,%7BplaylistId:o.destination,actions:s.map(e=%3E(%7Baction:%22ACTION_ADD_VIDEO%22,addedVideoId:e%7D))%7D,%7Bwrite:true,destination:o.destination,source:o.source%7D);if(r.status!==%22STATUS_SUCCEEDED%22)t(%22YouTube%20did%20not%20confirm%20the%20last%20batch.%20The%20saved%20playlist%20can%20be%20checked%20and%20continued.%22);a%2B=s.length;o.confirmedCount=a;e.save(%7B...o,phase:%22adding%22%7D)%7Dn();i(%22Verifying%20the%20complete%20video%20order%5Cu2026%22);await%20h(o,true);e.save(null);return%20o%7Dasync%20function%20b(o)%7Bconst%20s=a(o.source),r=o.title.trim(),c=Number(o.count);if(!Number.isSafeInteger(c)%7C%7Cc%3C1%7C%7Cc%3E5e3)t(%22Choose%20a%20whole%20number%20from%201%20to%205,000.%22);if(!r%7C%7C%5B...r%5D.length%3E150)t(%22Use%20a%20playlist%20name%20of%201%20to%20150%20characters.%22);const%20d=await%20l(s);const%20u=await%20p(d,c,o.checkPlayback);e.summary%3F.(d.length%2B%22%20entries%20%5Cxb7%20%22%2Bu.duplicates%2B%22%20repeated%20IDs%20skipped%20%5Cxb7%20%22%2Bu.unavailable%2B%22%20unavailable%20entries%20skipped%20%5Cxb7%20%22%2Bu.rejected%2B%22%20failed%20playback%20checks%22);n();const%20h=%7Bversion:1,source:s,title:r,ids:u.selected.map(e=%3Ee.id),phase:%22creating%22,destination:null,account:e.account%7D;f(h);e.save(h);i(%22Creating%20the%20new%20private%20playlist%5Cu2026%22);const%20b=await%20e.post(%22playlist/create%22,%7Btitle:r,privacyStatus:%22PRIVATE%22,videoIds:h.ids.slice(0,50)%7D,%7Bwrite:true,source:s%7D);if(typeof%20b.playlistId!==%22string%22%7C%7C!b.playlistId)t(%22YouTube%20did%20not%20return%20a%20new%20playlist%20address.%20Creation%20may%20have%20succeeded;%20check%20YouTube%20playlists%20before%20trying%20again.%22);const%20m=%7B...h,destination:b.playlistId,phase:%22created%22,confirmedCount:Math.min(50,h.ids.length)%7D;f(m);e.save(m);await%20y(m,true);return%20m%7Dreturn%7BsourceId:a,readPlaylist:l,uniqueAvailable:c,shuffled:d,playbackStatus:u,select:p,validateJob:f,finish:y,run:b%7D%7Dfunction%20t(e)%7B%22use%20strict%22;const%20t=%22https://www.youtube.com%22;const%20n=%22youtube-random-sample-panel%22;const%20i=%22youtube-random-sample-job-v1%22;if(location.origin!==t)%7Balert(%22Open%20the%20source%20playlist%20at%20https://www.youtube.com%20while%20signed%20in,%20then%20click%20the%20%5Cu2928%20bookmark%20for%20Random%20Sample.%22);return%7Dif(document.getElementById(n))return;const%20o=e=%3Ewindow.ytcfg%3F.get%3F.(e)%3F%3Fwindow.yt%3F.config_%3F.%5Be%5D;const%20s=()=%3EJSON.stringify(%5Bo(%22SESSION_INDEX%22)%3F%3F0,o(%22DELEGATED_SESSION_ID%22)%7C%7C%22%22,o(%22DATASYNC_ID%22)%7C%7C%22%22%5D);const%20a=s();const%20r=o(%22INNERTUBE_CONTEXT%22);if(!r%3F.client%7C%7Co(%22LOGGED_IN%22)===false)%7Balert(%22Sign%20in%20to%20YouTube%20and%20reload%20the%20playlist%20page,%20then%20click%20the%20%5Cu2928%20bookmark%20for%20Random%20Sample%20again.%22);return%7Dconst%20l=JSON.parse(JSON.stringify(r));l.client.hl=%22en%22;let%20c=false,d=false,u=false,p=null;const%20f=e=%3Enew%20Promise(t=%3EsetTimeout(t,e));const%20h=e=%3Edocument.cookie.split(%22;%22).map(e=%3Ee.trim()).find(t=%3Et.startsWith(e%2B%22=%22))%3F.slice(e.length%2B1);const%20y=e=%3E%7Bconst%20t=Math.floor(4294967296/e)*e;const%20n=new%20Uint32Array(1);do%7Bcrypto.getRandomValues(n)%7Dwhile(n%5B0%5D%3E=t);return%20n%5B0%5D%25e%7D;async%20function%20b()%7Bconst%20e=h(%22SAPISID%22)%7C%7Ch(%22__Secure-3PAPISID%22);if(!e)throw%20new%20Error(%22The%20current%20YouTube%20sign-in%20could%20not%20be%20used.%20Sign%20in%20and%20reload%20the%20page.%22);const%20n=Math.floor(Date.now()/1e3);const%20i=await%20crypto.subtle.digest(%22SHA-1%22,(new%20TextEncoder).encode(n%2B%22%20%22%2Be%2B%22%20%22%2Bt));return%22SAPISIDHASH%20%22%2Bn%2B%22_%22%2BArray.from(new%20Uint8Array(i),e=%3Ee.toString(16).padStart(2,%220%22)).join(%22%22)%7Dasync%20function%20m(e,n,i=%7B%7D)%7Bconst%20r=%5B%22playlist/create%22,%22browse/edit_playlist%22%5D.includes(e);if(!%5B%22browse%22,%22player%22,%22playlist/create%22,%22browse/edit_playlist%22%5D.includes(e)%7C%7Cr!==!!i.write)throw%20new%20Error(%22An%20unsupported%20request%20was%20blocked.%22);if(r%26%26e===%22playlist/create%22%26%26(n.privacyStatus!==%22PRIVATE%22%7C%7Cn.videoIds%3F.length%3E50%7C%7C!n.videoIds%3F.length))throw%20new%20Error(%22An%20invalid%20creation%20request%20was%20blocked.%22);if(r%26%26e===%22browse/edit_playlist%22%26%26(!i.destination%7C%7Cn.playlistId!==i.destination%7C%7Cn.playlistId===i.source%7C%7Cp%3F.destination!==n.playlistId%7C%7C!n.actions%3F.length%7C%7Cn.actions.length%3E50%7C%7Cn.actions.some(e=%3Ee.action!==%22ACTION_ADD_VIDEO%22%7C%7C!p.ids.includes(e.addedVideoId))))throw%20new%20Error(%22A%20request%20outside%20the%20new%20playlist%20was%20blocked.%22);for(let%20i=0;i%3C(r%3F1:3);i%2B%2B)%7Bif(d)throw%20new%20Error(%22Stopped.%22);if(s()!==a%7C%7Co(%22LOGGED_IN%22)===false)throw%20new%20Error(%22The%20selected%20YouTube%20account%20changed.%20Reload%20before%20continuing.%22);const%20c=%7B%22Content-Type%22:%22application/json%22,Authorization:await%20b(),%22X-Origin%22:t,%22X-Goog-AuthUser%22:String(o(%22SESSION_INDEX%22)%3F%3F0),%22X-Youtube-Client-Name%22:String(o(%22INNERTUBE_CONTEXT_CLIENT_NAME%22)%7C%7C1),%22X-Youtube-Client-Version%22:l.client.clientVersion%7D;if(o(%22DELEGATED_SESSION_ID%22))c%5B%22X-Goog-PageId%22%5D=o(%22DELEGATED_SESSION_ID%22);if(l.client.visitorData)c%5B%22X-Goog-Visitor-Id%22%5D=l.client.visitorData;const%20p=o(%22INNERTUBE_API_KEY%22);const%20h=t%2B%22/youtubei/v1/%22%2Be%2B%22%3FprettyPrint=false%22%2B(p%3F%22%26key=%22%2BencodeURIComponent(p):%22%22);const%20y=new%20AbortController;const%20m=setTimeout(()=%3Ey.abort(),3e4);let%20g;try%7Bu=r;g=await%20fetch(h,%7Bmethod:%22POST%22,credentials:%22same-origin%22,redirect:%22error%22,headers:c,body:JSON.stringify(%7Bcontext:l,...n%7D),signal:y.signal%7D);if(!g.ok)%7Bif(!r%26%26i%3C2%26%26%5B429,500,502,503,504%5D.includes(g.status))%7Bawait%20f(1e3*(i%2B1));continue%7Dthrow%20new%20Error(%22YouTube%20returned%20HTTP%20%22%2Bg.status%2B%22.%22)%7Dconst%20e=await%20g.json();if(e.error)throw%20new%20Error(%22YouTube:%20%22%2B(e.error.message%7C%7C%22request%20rejected%22));if(e.responseContext%3F.visitorData)l.client.visitorData=e.responseContext.visitorData;return%20e%7Dcatch(e)%7Bif(!r%26%26i%3C2%26%26(e%20instanceof%20TypeError%7C%7Ce.name===%22AbortError%22))%7Bawait%20f(1e3*(i%2B1));continue%7Dif(e.name===%22AbortError%22)throw%20new%20Error(%22The%20YouTube%20request%20timed%20out.%22);throw%20e%7Dfinally%7BclearTimeout(m);u=false%7D%7D%7Dconst%20g=document.createElement(%22div%22);g.id=n;Object.assign(g.style,%7Bposition:%22fixed%22,inset:%220%22,zIndex:%222147483647%22%7D);const%20w=g.attachShadow(%7Bmode:%22open%22%7D);const%20v=document.createElement(%22style%22);v.textContent=%60%5Cn%20%20%20%20:host%7Bfont:16px/1.5%20system-ui,sans-serif;color:%23eaf0f4;color-scheme:dark%7D%5Cn%20%20%20%20*%7Bbox-sizing:border-box%7D%20.veil%7Bheight:100%25;padding:24px;background:%23000a;display:grid;place-items:center%7D%5Cn%20%20%20%20.box%7Bwidth:min(540px,100%25);max-height:92vh;overflow:auto;background:%23151b24;border:1px%20solid%20%2347515e;border-radius:18px;padding:26px;box-shadow:0%2024px%2080px%20%230008%7D%5Cn%20%20%20%20h2%7Bfont-size:25px;line-height:1.2;margin:8px%200%2012px%7D%20.eyebrow%7Bfont-size:11px;font-weight:700;letter-spacing:.16em;color:%237fe0ce%7D%5Cn%20%20%20%20p%7Bmargin:10px%200;color:%23b8c4d1%7Dlabel%7Bdisplay:block;font-size:13px;font-weight:650;margin:17px%200%206px%7D%5Cn%20%20%20%20input%5Btype=text%5D,input%5Btype=number%5D%7Bdisplay:block;width:100%25;font:inherit;color:%23fff;background:%230c1119;border:1px%20solid%20%23506071;border-radius:7px;padding:10px%2012px%7D%5Cn%20%20%20%20input:focus,button:focus-visible,a:focus-visible%7Boutline:2px%20solid%20%237fe0ce;outline-offset:3px%7D%5Cn%20%20%20%20.checks%7Bdisplay:flex;gap:9px;align-items:flex-start;font-weight:400%7D.checks%20input%7Bmargin-top:4px;accent-color:%237fe0ce%7D%5Cn%20%20%20%20small%7Bdisplay:block;font-size:12px;color:%23a4b3c2;margin-top:5px%7D%5Cn%20%20%20%20.actions%7Bdisplay:flex;gap:10px;flex-wrap:wrap;margin-top:22px%7Dbutton%7Bborder:1px%20solid%20%23566271;border-radius:8px;padding:10px%2015px;font:600%2014px%20system-ui;cursor:pointer;background:%2326303d;color:%23fff%7D%5Cn%20%20%20%20button.primary%7Bbackground:%238de8d6;color:%2310231f;border-color:%238de8d6%7Dbutton:disabled%7Bopacity:.45;cursor:default%7D%5Cn%20%20%20%20.status%7Bwhite-space:pre-wrap;padding-top:12px;color:%23eaf0f4;font-size:14px;overflow-wrap:anywhere%7D%5Cn%20%20%20%20.result%7Bdisplay:block;margin-top:12px;color:%238de8d6;font-weight:650%7D%20.summary%7Bfont-size:12px;color:%23a4b3c2;overflow-wrap:anywhere%7D%5Cn%20%20%20%20.recovery%7Bmargin-top:16px;padding:14px;border:1px%20solid%20%23796337;border-radius:10px%7D.recovery%20p%7Bfont-size:13px;margin:0%200%2010px%7D%5Cn%20%20%20%20%5Bhidden%5D%7Bdisplay:none!important%7D%5Cn%20%20%20%20%40media(max-width:500px)%7B.veil%7Bpadding:10px%7D.box%7Bpadding:20px%7D%7D%5Cn%20%20%60;w.append(v);function%20x(e,t,n,i=%7B%7D)%7Bconst%20o=document.createElement(e);if(n)o.textContent=n;for(const%5Be,t%5Dof%20Object.entries(i))o.setAttribute(e,t);if(t)t.append(o);return%20o%7Dconst%20E=x(%22div%22,w,%22%22,%7Bclass:%22veil%22%7D);const%20T=x(%22section%22,E,%22%22,%7Bclass:%22box%22,role:%22dialog%22,%22aria-modal%22:%22true%22,%22aria-labelledby%22:%22sampler-title%22%7D);x(%22div%22,T,%22YOUTUBE%20%5Cxb7%20RANDOM%20SAMPLE%20%5Cxb7%201.0.1%22,%7Bclass:%22eyebrow%22%7D);x(%22h2%22,T,%22A%20fresh%20playlist.%22,%7Bid:%22sampler-title%22%7D);x(%22p%22,T,%22Choose%20how%20many%20distinct%20videos%20to%20copy%20in%20random%20order.%20The%20new%20playlist%20will%20be%20private.%22);const%20I=x(%22form%22,T);function%20k(e,t,n,i)%7Bx(%22label%22,I,e,%7Bfor:t%7D);const%20o=x(%22input%22,I,%22%22,%7Bid:t,type:n,required:%22%22,autocomplete:%22off%22%7D);o.value=i;return%20o%7Dconst%20S=k(%22Source%20playlist%20address%22,%22sample-source%22,%22text%22,new%20URL(location.href).searchParams.has(%22list%22)%3Flocation.href:%22%22);const%20A=k(%22Number%20of%20videos%20(N)%22,%22sample-count%22,%22number%22,%2250%22);A.min=%221%22;A.max=%225000%22;A.step=%221%22;const%20C=k(%22New%20playlist%20name%22,%22sample-name%22,%22text%22,%22Videos%20Taste%22);C.maxLength=150;const%20N=x(%22label%22,I,%22%22,%7Bclass:%22checks%22%7D);const%20D=x(%22input%22,N,%22%22,%7Btype:%22checkbox%22%7D);D.checked=true;const%20R=x(%22span%22,N,%22Check%20playback%20availability%22);x(%22small%22,R,%22Recommended.%20Turning%20this%20off%20is%20faster%20and%20skips%20only%20entries%20marked%20unavailable%20in%20the%20playlist.%22);x(%22small%22,I,%22Uses%20the%20YouTube%20account%20selected%20in%20this%20tab.%20Keep%20the%20tab%20open%20until%20completion.%22);const%20_=x(%22div%22,I,%22%22,%7Bclass:%22actions%22%7D);const%20O=x(%22button%22,_,%22Create%20playlist%22,%7Btype:%22submit%22,class:%22primary%22%7D);const%20Y=x(%22button%22,_,%22Stop%22,%7Btype:%22button%22%7D);Y.hidden=true;const%20L=x(%22button%22,_,%22Close%22,%7Btype:%22button%22%7D);const%20P=x(%22div%22,T,%22%22,%7Bclass:%22status%22,role:%22status%22,%22aria-live%22:%22polite%22%7D);const%20U=x(%22p%22,T,%22%22,%7Bclass:%22summary%22%7D);const%20V=x(%22a%22,T,%22%22,%7Bclass:%22result%22,target:%22_blank%22,rel:%22noopener%20noreferrer%22%7D);V.hidden=true;const%20j=x(%22div%22,T,%22%22,%7Bclass:%22recovery%22%7D);j.hidden=true;const%20z=x(%22p%22,j);const%20q=x(%22button%22,j,%22Finish%20saved%20playlist%22,%7Btype:%22button%22%7D);const%20G=x(%22button%22,j,%22Clear%20saved%20attempt%22,%7Btype:%22button%22%7D);x(%22small%22,j,%22Clearing%20this%20record%20leaves%20any%20created%20playlist%20on%20YouTube.%22);const%20M=document.activeElement;document.documentElement.append(g);if(S.value)A.focus();else%20S.focus();function%20X(e)%7Bif(!e%3F.destination%7C%7C!/%5E%5BA-Za-z0-9_-%5D%7B2,150%7D%24/.test(e.destination))%7BV.hidden=true;return%7DV.href=t%2B%22/playlist%3Flist=%22%2BencodeURIComponent(e.destination);V.textContent=%22Open%20%5Cu201c%22%2Be.title%2B%22%5Cu201d%20on%20YouTube%22;V.hidden=false%7Dfunction%20J()%7Bj.hidden=!p%7C%7Cc;if(!p)return;X(p);const%20e=p.account===a;z.textContent=!e%3F%22A%20saved%20attempt%20belongs%20to%20another%20YouTube%20account.%20Switch%20back%20to%20that%20account%20to%20continue.%22:p.destination%3F%22A%20playlist%20was%20created%20but%20has%20not%20been%20fully%20verified.%20Continuing%20checks%20its%20existing%20videos%20before%20adding%20any%20missing%20ones.%22:%22A%20creation%20request%20was%20started,%20but%20its%20result%20is%20unknown.%20Check%20the%20YouTube%20Playlists%20page%20for%20%5Cu201c%22%2Bp.title%2B%22%5Cu201d%20before%20clearing%20this%20record.%22;q.hidden=!p.destination%7C%7C!e%7Dfunction%20B(e)%7Bp=e;try%7Bif(e)sessionStorage.setItem(i,JSON.stringify(e));else%20sessionStorage.removeItem(i)%7Dcatch%7BU.textContent=%22Recovery%20storage%20is%20unavailable.%20Keep%20this%20panel%20open%20until%20completion.%22%7Dif(e%3F.destination)X(e)%7Dconst%20K=e(%7Bpost:m,account:a,randomInt:y,delay:f,cancelled:()=%3Ed,save:B,progress:e=%3E%7Bif(!d)P.textContent=e%7D,summary:e=%3EU.textContent=e%7D);try%7Bconst%20e=sessionStorage.getItem(i);if(e)%7Bconst%20t=JSON.parse(e);K.validateJob(t);p=t;J()%7D%7Dcatch%7BP.textContent=%22A%20saved%20attempt%20could%20not%20be%20read.%20Check%20YouTube%20playlists%20before%20creating%20another%20copy.%22%7Dfunction%20%24(e)%7Bc=e;%5BS,A,C,D,L,q,G%5D.forEach(t=%3Et.disabled=e);O.disabled=e%7C%7C!!p;Y.hidden=!e;Y.disabled=false;J()%7Dasync%20function%20Z(e)%7Bif(c)return;d=false;V.hidden=true;U.textContent=%22%22;%24(true);try%7Bconst%20t=e%3Fawait%20K.finish(p):await%20K.run(%7Bsource:S.value,count:A.value,title:C.value,checkPlayback:D.checked%7D);P.textContent=%22Done.%20%22%2Bt.ids.length%2B%22%20distinct%20videos;%20the%20saved%20order%20was%20verified.%22;X(t)%7Dcatch(e)%7BP.textContent=e.message%7C%7C%22The%20request%20could%20not%20be%20completed.%22;if(p)P.textContent%2B=p.destination%3F%22%5CnA%20partial%20or%20complete%20playlist%20exists.%20Its%20address%20is%20below.%22:%22%5CnA%20playlist%20may%20already%20exist.%20Check%20YouTube%20playlists%20before%20retrying.%22%7Dfinally%7B%24(false)%7D%7DI.addEventListener(%22submit%22,e=%3E%7Be.preventDefault();if(!p)Z(false)%7D);q.addEventListener(%22click%22,()=%3E%7Bif(p%3F.account===a)Z(true)%7D);G.addEventListener(%22click%22,()=%3E%7BB(null);%24(false);P.textContent=%22Saved%20attempt%20cleared.%22;V.hidden=true%7D);Y.addEventListener(%22click%22,()=%3E%7Bd=true;Y.disabled=true;P.textContent=u%3F%22Stopping%20after%20the%20current%20write%20finishes%5Cu2026%22:%22Stopping%20after%20the%20current%20requests%20finish%5Cu2026%22%7D);const%20H=e=%3E%7Bif(c)%7Be.preventDefault();e.returnValue=%22%22%7D%7D;window.addEventListener(%22beforeunload%22,H);function%20F()%7Bif(!c)%7Bwindow.removeEventListener(%22beforeunload%22,H);g.remove();M%3F.focus%3F.()%7D%7DL.addEventListener(%22click%22,F);w.addEventListener(%22keydown%22,e=%3E%7Bif(e.key===%22Escape%22)%7Be.preventDefault();F()%7Dif(e.key===%22Tab%22)%7Bconst%20t=%5B...w.querySelectorAll(%22input,button,a%5Bhref%5D%22)%5D.filter(e=%3E!e.disabled%26%26!e.hidden%26%26e.getClientRects().length);const%20n=t%5B0%5D,i=t.at(-1);if(e.shiftKey%26%26w.activeElement===n)%7Be.preventDefault();i.focus()%7Delse%20if(!e.shiftKey%26%26w.activeElement===i)%7Be.preventDefault();n.focus()%7D%7D%7D);%24(false)%7Dt(e)%7D();">⤨</a> to your Bookmarks Toolbar. The bookmark name is <strong>⤨</strong>.</p>
+    <p>Open <a href="https://www.youtube.com/">www.youtube.com</a> in the account you want to use, then click the saved bookmark. To update, close the existing panel and replace the old bookmark.</p>
+  </section>
+  <h2>Using Random Sample</h2>
+  <ul>
+    <li>Open the source playlist on regular YouTube. Enter the number of videos and the name of the new playlist.</li>
+    <li>The sampler reads the whole source, deduplicates video IDs and shuffles the result. With playback checks enabled it replaces unavailable candidates when possible.</li>
+    <li>The destination is created separately. If an addition is interrupted, recovery checks the existing destination order before continuing.</li>
+  </ul>
+  <details>
+    <summary>Import a bookmark or copy its URL</summary>
+    <p>Download the bookmark file and select it under <strong>Import and Backup → Import Bookmarks from HTML</strong> in the Firefox bookmarks manager.</p>
+    <button type="button" id="export-bookmark">Download bookmark file</button>
+    <p><label for="bookmark-code">For manual setup, create a bookmark named <strong>⤨</strong> and use this entire URL as its address.</label></p>
+    <textarea id="bookmark-code" rows="3" readonly spellcheck="false"></textarea>
+    <button type="button" id="copy-code">Copy bookmark URL</button>
+  </details>
+  <p id="install-status" role="status" aria-live="polite"></p>
+  <details>
+    <summary>Readable JavaScript</summary>
+    <p>The source below is the input used to build this bookmarklet.</p>
+    <button type="button" id="download-source">Download JavaScript</button>
+    <pre id="source-code">/* YouTube Random Sample 1.0.1 — self-contained, no external dependencies. */
+function makeSamplerCore(deps) {
+  &#39;use strict&#39;;
+  const fail = (message) =&gt; {
+    throw new Error(message);
+  };
+  const checkpoint = () =&gt; {
+    if (deps.cancelled?.()) fail(&#39;Stopped.&#39;);
+  };
+  const say = (message) =&gt; deps.progress?.(message);
+  const textOf = (value) =&gt;
+    typeof value === &#39;string&#39; ? value : value?.simpleText || value?.runs?.map((r) =&gt; r.text || &#39;&#39;).join(&#39;&#39;) || &#39;&#39;;
+
+  function find(node, key, found = []) {
+    if (!node || typeof node !== &#39;object&#39;) return found;
+    if (Object.prototype.hasOwnProperty.call(node, key)) found.push(node[key]);
+    for (const value of Object.values(node)) find(value, key, found);
+    return found;
+  }
+
+  function sourceId(value) {
+    let id = String(value).trim();
+    if (/^https?:\/\//i.test(id)) {
+      const url = new URL(id);
+      if (
+        ![&#39;youtube.com&#39;, &#39;www.youtube.com&#39;, &#39;music.youtube.com&#39;, &#39;m.youtube.com&#39;, &#39;youtu.be&#39;].includes(
+          url.hostname
+        )
+      )
+        fail(&#39;Use a YouTube playlist address.&#39;);
+      id = url.searchParams.get(&#39;list&#39;) || &#39;&#39;;
+    }
+    if (!/^[A-Za-z0-9_-]{2,150}$/.test(id)) fail(&#39;Enter a playlist address containing list=, or a playlist ID.&#39;);
+    if (id.startsWith(&#39;RD&#39;))
+      fail(&#39;YouTube Mixes change as they play. Choose a saved playlist with a fixed video list.&#39;);
+    return id;
+  }
+
+  function unpack(scope) {
+    const rows = [],
+      tokens = [];
+    if (!Array.isArray(scope.contents))
+      fail(&#39;YouTube returned an unfamiliar playlist layout. Nothing further was changed.&#39;);
+    for (const item of scope.contents) {
+      if (item.playlistVideoRenderer) {
+        const r = item.playlistVideoRenderer;
+        const id = r.videoId || &#39;&#39;;
+        const title = textOf(r.title);
+        const endpoint = r.navigationEndpoint?.watchEndpoint;
+        const unavailable =
+          !/^[A-Za-z0-9_-]{11}$/.test(id) ||
+          r.isPlayable === false ||
+          /^(\[?)(private video|deleted video|unavailable video)(\]?)$/i.test(title.trim()) ||
+          (r.isPlayable !== true &amp;&amp; endpoint?.videoId !== id);
+        rows.push({ id, title: title || id, available: !unavailable });
+      } else if (item.continuationItemRenderer) {
+        const commands = find(item.continuationItemRenderer, &#39;continuationCommand&#39;);
+        if (!commands.length || commands.some((c) =&gt; !c.token))
+          fail(&#39;The playlist continuation could not be read.&#39;);
+        tokens.push(...commands.map((c) =&gt; c.token));
+      } else if (!item.messageRenderer) {
+        fail(&#39;YouTube returned an unsupported playlist entry. Stopped to avoid sampling an incomplete list.&#39;);
+      }
+    }
+    for (const entry of scope.continuations || []) {
+      const token = entry.nextContinuationData?.continuation;
+      if (!token) fail(&#39;An unsupported continuation was returned.&#39;);
+      tokens.push(token);
+    }
+    const unique = [...new Set(tokens)];
+    if (unique.length &gt; 1) fail(&#39;The playlist returned ambiguous pagination. Nothing further was changed.&#39;);
+    return { rows, next: unique[0] || null };
+  }
+  async function readPlaylist(id, label = &#39;Reading source&#39;) {
+    checkpoint();
+    let json = await deps.post(&#39;browse&#39;, { browseId: &#39;VL&#39; + id });
+    const errors = find(json.alerts, &#39;alertRenderer&#39;).filter((a) =&gt; a.type === &#39;ERROR&#39;);
+    if (errors.length) fail(textOf(errors[0].text) || &#39;YouTube could not open this playlist.&#39;);
+    const lists = find(json.contents, &#39;playlistVideoListRenderer&#39;).filter(
+      (r) =&gt; !r.playlistId || r.playlistId === id
+    );
+    if (lists.length !== 1)
+      fail(&#39;The playlist could not be read. Check the address and access in the selected YouTube account.&#39;);
+    let scope = lists[0];
+    const targetId = scope.targetId || &#39;playlist-video-list&#39;;
+    const rows = [],
+      seen = new Set();
+    for (let page = 0; page &lt; 1000; page++) {
+      checkpoint();
+      const parsed = unpack(scope);
+      rows.push(...parsed.rows);
+      say(label + &#39;: &#39; + rows.length.toLocaleString() + &#39; entries&#39;);
+      if (!parsed.next) return rows;
+      if (seen.has(parsed.next)) fail(&#39;YouTube repeated a playlist page. Stopped to avoid an incomplete sample.&#39;);
+      seen.add(parsed.next);
+      json = await deps.post(&#39;browse&#39;, { continuation: parsed.next });
+      const legacy = json.continuationContents?.playlistVideoListContinuation;
+      if (legacy) {
+        scope = legacy;
+        continue;
+      }
+      const actions = [
+        ...find(json.onResponseReceivedActions, &#39;appendContinuationItemsAction&#39;),
+        ...find(json.onResponseReceivedEndpoints, &#39;appendContinuationItemsAction&#39;),
+        ...find(json.onResponseReceivedCommands, &#39;appendContinuationItemsAction&#39;)
+      ];
+      let matches = actions.filter((a) =&gt; a.targetId === targetId);
+      if (!matches.length) matches = actions.filter((a) =&gt; !a.targetId &amp;&amp; Array.isArray(a.continuationItems));
+      if (matches.length !== 1)
+        fail(&#39;The next playlist page could not be identified. Nothing further was changed.&#39;);
+      scope = { contents: matches[0].continuationItems };
+    }
+    fail(&#39;The playlist did not finish loading. Nothing further was changed.&#39;);
+  }
+
+  function uniqueAvailable(rows) {
+    const videos = new Map();
+    let unavailable = 0,
+      duplicates = 0;
+    for (const row of rows) {
+      if (!row.available) {
+        unavailable++;
+        continue;
+      }
+      if (videos.has(row.id)) {
+        duplicates++;
+        continue;
+      }
+      videos.set(row.id, row);
+    }
+    return { videos: [...videos.values()], unavailable, duplicates };
+  }
+
+  function shuffled(items) {
+    const result = items.slice();
+    for (let i = result.length - 1; i &gt; 0; i--) {
+      const j = deps.randomInt(i + 1);
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
+  function playbackStatus(json) {
+    const p = json.playabilityStatus;
+    if (!p || !p.status) fail(&#39;YouTube did not return a playback result. Nothing was created.&#39;);
+    if (p.status === &#39;OK&#39;) return true;
+    const reason = [p.reason || &#39;&#39;, ...find(p, &#39;reason&#39;).map(textOf), ...find(p, &#39;subreason&#39;).map(textOf)].join(
+      &#39; &#39;
+    );
+    if (/confirm.*not a bot|unusual traffic|automated|too many requests/i.test(reason))
+      fail(
+        &#39;YouTube blocked the playback checks. Open a video normally, then run the tool again. Nothing was created.&#39;
+      );
+    if (p.status === &#39;LIVE_STREAM_OFFLINE&#39;) return false;
+    if (
+      [&#39;ERROR&#39;, &#39;UNPLAYABLE&#39;, &#39;LOGIN_REQUIRED&#39;].includes(p.status) &amp;&amp;
+      /private|deleted|removed|unavailable|not available|not exist|copyright|blocked|terminated|members.only|join this channel|purchase|rent this/i.test(
+        reason
+      )
+    )
+      return false;
+    fail(
+      &#39;Playback could not be confirmed (&#39; +
+        p.status +
+        &#39;). &#39; +
+        (reason.trim() || &#39;YouTube supplied no reason.&#39;) +
+        &#39; Nothing was created. The faster mode can use playlist availability flags instead.&#39;
+    );
+  }
+  async function select(rows, count, checkPlayback) {
+    const pool = uniqueAvailable(rows);
+    if (pool.videos.length &lt; count)
+      fail(
+        &#39;Only &#39; +
+          pool.videos.length +
+          &#39; distinct eligible videos were found; &#39; +
+          count +
+          &#39; were requested. Nothing was created.&#39;
+      );
+    const candidates = shuffled(pool.videos),
+      selected = [];
+    let checked = 0,
+      rejected = 0;
+    if (!checkPlayback) return { ...pool, selected: candidates.slice(0, count), rejected };
+    for (let pos = 0; pos &lt; candidates.length &amp;&amp; selected.length &lt; count; ) {
+      checkpoint();
+      const batch = candidates.slice(pos, pos + Math.min(3, count - selected.length));
+      pos += batch.length;
+      const verdicts = await Promise.all(
+        batch.map(async (row) =&gt; playbackStatus(await deps.post(&#39;player&#39;, { videoId: row.id })))
+      );
+      checkpoint();
+      batch.forEach((row, i) =&gt; {
+        if (verdicts[i]) selected.push(row);
+        else rejected++;
+      });
+      checked += batch.length;
+      say(&#39;Checking playback: &#39; + selected.length + &#39; of &#39; + count + &#39; ready · &#39; + checked + &#39; checked&#39;);
+    }
+    if (selected.length !== count)
+      fail(
+        &#39;Only &#39; +
+          selected.length +
+          &#39; videos passed playback checks; &#39; +
+          count +
+          &#39; were requested. Nothing was created.&#39;
+      );
+    return { ...pool, selected, rejected };
+  }
+
+  function validateJob(job) {
+    if (
+      !job ||
+      job.version !== 1 ||
+      sourceId(job.source) !== job.source ||
+      !Array.isArray(job.ids) ||
+      !job.ids.length ||
+      job.ids.length &gt; 5000 ||
+      job.ids.some((id) =&gt; !/^[A-Za-z0-9_-]{11}$/.test(id)) ||
+      new Set(job.ids).size !== job.ids.length ||
+      typeof job.title !== &#39;string&#39; ||
+      !job.title.trim() ||
+      [...job.title].length &gt; 150
+    )
+      fail(&#39;The saved selection is invalid. Nothing was changed.&#39;);
+    if (job.destination &amp;&amp; (!/^[A-Za-z0-9_-]{2,150}$/.test(job.destination) || job.destination === job.source))
+      fail(&#39;The destination is invalid. Nothing was changed.&#39;);
+  }
+  async function verifyPrefix(job, exact = false) {
+    let lastError;
+    for (let attempt = 0; attempt &lt; 3; attempt++) {
+      if (attempt) await deps.delay(750 * attempt);
+      try {
+        const rows = await readPlaylist(job.destination, &#39;Checking new playlist&#39;);
+        if (rows.length &gt; job.ids.length || rows.some((r, i) =&gt; r.id !== job.ids[i]))
+          fail(&#39;The new playlist differs from the saved selection. Automatic changes stopped.&#39;);
+        if (rows.length &lt; (job.confirmedCount || 0))
+          fail(
+            &#39;YouTube has not exposed the last confirmed batch yet. Wait briefly before continuing the saved playlist.&#39;
+          );
+        if (exact &amp;&amp; rows.length !== job.ids.length)
+          fail(
+            &#39;The new playlist currently contains &#39; + rows.length + &#39; of &#39; + job.ids.length + &#39; expected videos.&#39;
+          );
+        if (!rows.length) fail(&#39;The new playlist is not visible yet.&#39;);
+        return rows.length;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+    throw lastError;
+  }
+  async function finish(job, newlyCreated = false) {
+    validateJob(job);
+    if (!job.destination)
+      fail(&#39;The creation result is unknown. Check YouTube playlists before starting another copy.&#39;);
+    checkpoint();
+    // Re-read after any interruption. A lost response can still mean a successful write.
+    let offset = await verifyPrefix(job);
+    // A fresh destination can contain only the batch sent at creation, even after a reload.
+    if ((newlyCreated || job.phase === &#39;created&#39;) &amp;&amp; offset &gt; Math.min(50, job.ids.length))
+      fail(&#39;Unexpected creation result. Automatic changes stopped.&#39;);
+    while (offset &lt; job.ids.length) {
+      checkpoint();
+      const batch = job.ids.slice(offset, offset + 50);
+      say(&#39;Adding videos: &#39; + offset + &#39; of &#39; + job.ids.length);
+      deps.save({ ...job, phase: &#39;adding&#39; });
+      const response = await deps.post(
+        &#39;browse/edit_playlist&#39;,
+        {
+          playlistId: job.destination,
+          actions: batch.map((id) =&gt; ({ action: &#39;ACTION_ADD_VIDEO&#39;, addedVideoId: id }))
+        },
+        { write: true, destination: job.destination, source: job.source }
+      );
+      if (response.status !== &#39;STATUS_SUCCEEDED&#39;)
+        fail(&#39;YouTube did not confirm the last batch. The saved playlist can be checked and continued.&#39;);
+      offset += batch.length;
+      job.confirmedCount = offset;
+      deps.save({ ...job, phase: &#39;adding&#39; });
+    }
+    checkpoint();
+    say(&#39;Verifying the complete video order…&#39;);
+    await verifyPrefix(job, true);
+    deps.save(null);
+    return job;
+  }
+  async function run(options) {
+    const source = sourceId(options.source),
+      title = options.title.trim(),
+      count = Number(options.count);
+    if (!Number.isSafeInteger(count) || count &lt; 1 || count &gt; 5000) fail(&#39;Choose a whole number from 1 to 5,000.&#39;);
+    if (!title || [...title].length &gt; 150) fail(&#39;Use a playlist name of 1 to 150 characters.&#39;);
+    const rows = await readPlaylist(source);
+    const selection = await select(rows, count, options.checkPlayback);
+    deps.summary?.(
+      rows.length +
+        &#39; entries · &#39; +
+        selection.duplicates +
+        &#39; repeated IDs skipped · &#39; +
+        selection.unavailable +
+        &#39; unavailable entries skipped · &#39; +
+        selection.rejected +
+        &#39; failed playback checks&#39;
+    );
+    checkpoint();
+    const job = {
+      version: 1,
+      source,
+      title,
+      ids: selection.selected.map((r) =&gt; r.id),
+      phase: &#39;creating&#39;,
+      destination: null,
+      account: deps.account
+    };
+    validateJob(job);
+    deps.save(job);
+    say(&#39;Creating the new private playlist…&#39;);
+    const response = await deps.post(
+      &#39;playlist/create&#39;,
+      {
+        title,
+        privacyStatus: &#39;PRIVATE&#39;,
+        videoIds: job.ids.slice(0, 50)
+      },
+      { write: true, source }
+    );
+    if (typeof response.playlistId !== &#39;string&#39; || !response.playlistId)
+      fail(
+        &#39;YouTube did not return a new playlist address. Creation may have succeeded; check YouTube playlists before trying again.&#39;
+      );
+    // Keep the original creation record intact until the returned destination passes validation.
+    const createdJob = {
+      ...job,
+      destination: response.playlistId,
+      phase: &#39;created&#39;,
+      confirmedCount: Math.min(50, job.ids.length)
+    };
+    validateJob(createdJob);
+    deps.save(createdJob);
+    await finish(createdJob, true);
+    return createdJob;
+  }
+  return { sourceId, readPlaylist, uniqueAvailable, shuffled, playbackStatus, select, validateJob, finish, run };
+}
+
+function launchYouTubeSampler(makeCore) {
+  &#39;use strict&#39;;
+  const ORIGIN = &#39;https://www.youtube.com&#39;;
+  const ROOT_ID = &#39;youtube-random-sample-panel&#39;;
+  const STORE = &#39;youtube-random-sample-job-v1&#39;;
+  if (location.origin !== ORIGIN) {
+    alert(
+      &#39;Open the source playlist at https://www.youtube.com while signed in, then click the ⤨ bookmark for Random Sample.&#39;
+    );
+    return;
+  }
+  if (document.getElementById(ROOT_ID)) return;
+  const cfg = (key) =&gt; window.ytcfg?.get?.(key) ?? window.yt?.config_?.[key];
+  const identity = () =&gt;
+    JSON.stringify([cfg(&#39;SESSION_INDEX&#39;) ?? 0, cfg(&#39;DELEGATED_SESSION_ID&#39;) || &#39;&#39;, cfg(&#39;DATASYNC_ID&#39;) || &#39;&#39;]);
+  const account = identity();
+  const originalContext = cfg(&#39;INNERTUBE_CONTEXT&#39;);
+  if (!originalContext?.client || cfg(&#39;LOGGED_IN&#39;) === false) {
+    alert(&#39;Sign in to YouTube and reload the playlist page, then click the ⤨ bookmark for Random Sample again.&#39;);
+    return;
+  }
+  const context = JSON.parse(JSON.stringify(originalContext));
+  // English response reasons allow explicit classification without changing the page language.
+  context.client.hl = &#39;en&#39;;
+  let running = false,
+    stopped = false,
+    writing = false,
+    journal = null;
+  const delay = (ms) =&gt; new Promise((resolve) =&gt; setTimeout(resolve, ms));
+  const cookie = (name) =&gt;
+    document.cookie
+      .split(&#39;;&#39;)
+      .map((p) =&gt; p.trim())
+      .find((p) =&gt; p.startsWith(name + &#39;=&#39;))
+      ?.slice(name.length + 1);
+  const randomInt = (bound) =&gt; {
+    const ceiling = Math.floor(4294967296 / bound) * bound;
+    const value = new Uint32Array(1);
+    do {
+      crypto.getRandomValues(value);
+    } while (value[0] &gt;= ceiling);
+    return value[0] % bound;
+  };
+  async function auth() {
+    const sid = cookie(&#39;SAPISID&#39;) || cookie(&#39;__Secure-3PAPISID&#39;);
+    if (!sid) throw new Error(&#39;The current YouTube sign-in could not be used. Sign in and reload the page.&#39;);
+    const timestamp = Math.floor(Date.now() / 1000);
+    const digest = await crypto.subtle.digest(
+      &#39;SHA-1&#39;,
+      new TextEncoder().encode(timestamp + &#39; &#39; + sid + &#39; &#39; + ORIGIN)
+    );
+    return (
+      &#39;SAPISIDHASH &#39; +
+      timestamp +
+      &#39;_&#39; +
+      Array.from(new Uint8Array(digest), (n) =&gt; n.toString(16).padStart(2, &#39;0&#39;)).join(&#39;&#39;)
+    );
+  }
+  async function post(endpoint, payload, options = {}) {
+    const isWrite = [&#39;playlist/create&#39;, &#39;browse/edit_playlist&#39;].includes(endpoint);
+    if (
+      ![&#39;browse&#39;, &#39;player&#39;, &#39;playlist/create&#39;, &#39;browse/edit_playlist&#39;].includes(endpoint) ||
+      isWrite !== !!options.write
+    )
+      throw new Error(&#39;An unsupported request was blocked.&#39;);
+    if (
+      isWrite &amp;&amp;
+      endpoint === &#39;playlist/create&#39; &amp;&amp;
+      (payload.privacyStatus !== &#39;PRIVATE&#39; || payload.videoIds?.length &gt; 50 || !payload.videoIds?.length)
+    )
+      throw new Error(&#39;An invalid creation request was blocked.&#39;);
+    if (
+      isWrite &amp;&amp;
+      endpoint === &#39;browse/edit_playlist&#39; &amp;&amp;
+      (!options.destination ||
+        payload.playlistId !== options.destination ||
+        payload.playlistId === options.source ||
+        journal?.destination !== payload.playlistId ||
+        !payload.actions?.length ||
+        payload.actions.length &gt; 50 ||
+        payload.actions.some((a) =&gt; a.action !== &#39;ACTION_ADD_VIDEO&#39; || !journal.ids.includes(a.addedVideoId)))
+    )
+      throw new Error(&#39;A request outside the new playlist was blocked.&#39;);
+    for (let attempt = 0; attempt &lt; (isWrite ? 1 : 3); attempt++) {
+      if (stopped) throw new Error(&#39;Stopped.&#39;);
+      if (identity() !== account || cfg(&#39;LOGGED_IN&#39;) === false)
+        throw new Error(&#39;The selected YouTube account changed. Reload before continuing.&#39;);
+      const headers = {
+        &#39;Content-Type&#39;: &#39;application/json&#39;,
+        &#39;Authorization&#39;: await auth(),
+        &#39;X-Origin&#39;: ORIGIN,
+        &#39;X-Goog-AuthUser&#39;: String(cfg(&#39;SESSION_INDEX&#39;) ?? 0),
+        &#39;X-Youtube-Client-Name&#39;: String(cfg(&#39;INNERTUBE_CONTEXT_CLIENT_NAME&#39;) || 1),
+        &#39;X-Youtube-Client-Version&#39;: context.client.clientVersion
+      };
+      if (cfg(&#39;DELEGATED_SESSION_ID&#39;)) headers[&#39;X-Goog-PageId&#39;] = cfg(&#39;DELEGATED_SESSION_ID&#39;);
+      if (context.client.visitorData) headers[&#39;X-Goog-Visitor-Id&#39;] = context.client.visitorData;
+      const key = cfg(&#39;INNERTUBE_API_KEY&#39;);
+      const url =
+        ORIGIN +
+        &#39;/youtubei/v1/&#39; +
+        endpoint +
+        &#39;?prettyPrint=false&#39; +
+        (key ? &#39;&amp;key=&#39; + encodeURIComponent(key) : &#39;&#39;);
+      const controller = new AbortController();
+      const timer = setTimeout(() =&gt; controller.abort(), 30000);
+      let response;
+      try {
+        writing = isWrite;
+        response = await fetch(url, {
+          method: &#39;POST&#39;,
+          credentials: &#39;same-origin&#39;,
+          redirect: &#39;error&#39;,
+          headers,
+          body: JSON.stringify({ context, ...payload }),
+          signal: controller.signal
+        });
+        if (!response.ok) {
+          if (!isWrite &amp;&amp; attempt &lt; 2 &amp;&amp; [429, 500, 502, 503, 504].includes(response.status)) {
+            await delay(1000 * (attempt + 1));
+            continue;
+          }
+          throw new Error(&#39;YouTube returned HTTP &#39; + response.status + &#39;.&#39;);
+        }
+        const json = await response.json();
+        if (json.error) throw new Error(&#39;YouTube: &#39; + (json.error.message || &#39;request rejected&#39;));
+        if (json.responseContext?.visitorData) context.client.visitorData = json.responseContext.visitorData;
+        return json;
+      } catch (error) {
+        // Writes are never blindly retried: a timeout can happen after YouTube committed them.
+        if (!isWrite &amp;&amp; attempt &lt; 2 &amp;&amp; (error instanceof TypeError || error.name === &#39;AbortError&#39;)) {
+          await delay(1000 * (attempt + 1));
+          continue;
+        }
+        if (error.name === &#39;AbortError&#39;) throw new Error(&#39;The YouTube request timed out.&#39;);
+        throw error;
+      } finally {
+        clearTimeout(timer);
+        writing = false;
+      }
+    }
+  }
+  const host = document.createElement(&#39;div&#39;);
+  host.id = ROOT_ID;
+  Object.assign(host.style, { position: &#39;fixed&#39;, inset: &#39;0&#39;, zIndex: &#39;2147483647&#39; });
+  const shadow = host.attachShadow({ mode: &#39;open&#39; });
+  const style = document.createElement(&#39;style&#39;);
+  style.textContent = `
+    :host{font:16px/1.5 system-ui,sans-serif;color:#eaf0f4;color-scheme:dark}
+    *{box-sizing:border-box} .veil{height:100%;padding:24px;background:#000a;display:grid;place-items:center}
+    .box{width:min(540px,100%);max-height:92vh;overflow:auto;background:#151b24;border:1px solid #47515e;border-radius:18px;padding:26px;box-shadow:0 24px 80px #0008}
+    h2{font-size:25px;line-height:1.2;margin:8px 0 12px} .eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;color:#7fe0ce}
+    p{margin:10px 0;color:#b8c4d1}label{display:block;font-size:13px;font-weight:650;margin:17px 0 6px}
+    input[type=text],input[type=number]{display:block;width:100%;font:inherit;color:#fff;background:#0c1119;border:1px solid #506071;border-radius:7px;padding:10px 12px}
+    input:focus,button:focus-visible,a:focus-visible{outline:2px solid #7fe0ce;outline-offset:3px}
+    .checks{display:flex;gap:9px;align-items:flex-start;font-weight:400}.checks input{margin-top:4px;accent-color:#7fe0ce}
+    small{display:block;font-size:12px;color:#a4b3c2;margin-top:5px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}button{border:1px solid #566271;border-radius:8px;padding:10px 15px;font:600 14px system-ui;cursor:pointer;background:#26303d;color:#fff}
+    button.primary{background:#8de8d6;color:#10231f;border-color:#8de8d6}button:disabled{opacity:.45;cursor:default}
+    .status{white-space:pre-wrap;padding-top:12px;color:#eaf0f4;font-size:14px;overflow-wrap:anywhere}
+    .result{display:block;margin-top:12px;color:#8de8d6;font-weight:650} .summary{font-size:12px;color:#a4b3c2;overflow-wrap:anywhere}
+    .recovery{margin-top:16px;padding:14px;border:1px solid #796337;border-radius:10px}.recovery p{font-size:13px;margin:0 0 10px}
+    [hidden]{display:none!important}
+    @media(max-width:500px){.veil{padding:10px}.box{padding:20px}}
+  `;
+  shadow.append(style);
+
+  function element(tag, parent, text, attrs = {}) {
+    const el = document.createElement(tag);
+    if (text) el.textContent = text;
+    for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, value);
+    if (parent) parent.append(el);
+    return el;
+  }
+  const veil = element(&#39;div&#39;, shadow, &#39;&#39;, { class: &#39;veil&#39; });
+  const box = element(&#39;section&#39;, veil, &#39;&#39;, {
+    class: &#39;box&#39;,
+    role: &#39;dialog&#39;,
+    &#39;aria-modal&#39;: &#39;true&#39;,
+    &#39;aria-labelledby&#39;: &#39;sampler-title&#39;
+  });
+  element(&#39;div&#39;, box, &#39;YOUTUBE · RANDOM SAMPLE · 1.0.1&#39;, { class: &#39;eyebrow&#39; });
+  element(&#39;h2&#39;, box, &#39;A fresh playlist.&#39;, { id: &#39;sampler-title&#39; });
+  element(&#39;p&#39;, box, &#39;Choose how many distinct videos to copy in random order. The new playlist will be private.&#39;);
+  const form = element(&#39;form&#39;, box);
+
+  function input(label, id, type, value) {
+    element(&#39;label&#39;, form, label, { for: id });
+    const field = element(&#39;input&#39;, form, &#39;&#39;, { id, type, required: &#39;&#39;, autocomplete: &#39;off&#39; });
+    field.value = value;
+    return field;
+  }
+  const list = input(
+    &#39;Source playlist address&#39;,
+    &#39;sample-source&#39;,
+    &#39;text&#39;,
+    new URL(location.href).searchParams.has(&#39;list&#39;) ? location.href : &#39;&#39;
+  );
+  const count = input(&#39;Number of videos (N)&#39;, &#39;sample-count&#39;, &#39;number&#39;, &#39;50&#39;);
+  count.min = &#39;1&#39;;
+  count.max = &#39;5000&#39;;
+  count.step = &#39;1&#39;;
+  const title = input(&#39;New playlist name&#39;, &#39;sample-name&#39;, &#39;text&#39;, &#39;Videos Taste&#39;);
+  title.maxLength = 150;
+  const checkLabel = element(&#39;label&#39;, form, &#39;&#39;, { class: &#39;checks&#39; });
+  const check = element(&#39;input&#39;, checkLabel, &#39;&#39;, { type: &#39;checkbox&#39; });
+  check.checked = true;
+  const checkText = element(&#39;span&#39;, checkLabel, &#39;Check playback availability&#39;);
+  element(
+    &#39;small&#39;,
+    checkText,
+    &#39;Recommended. Turning this off is faster and skips only entries marked unavailable in the playlist.&#39;
+  );
+  element(&#39;small&#39;, form, &#39;Uses the YouTube account selected in this tab. Keep the tab open until completion.&#39;);
+  const actions = element(&#39;div&#39;, form, &#39;&#39;, { class: &#39;actions&#39; });
+  const create = element(&#39;button&#39;, actions, &#39;Create playlist&#39;, { type: &#39;submit&#39;, class: &#39;primary&#39; });
+  const stop = element(&#39;button&#39;, actions, &#39;Stop&#39;, { type: &#39;button&#39; });
+  stop.hidden = true;
+  const close = element(&#39;button&#39;, actions, &#39;Close&#39;, { type: &#39;button&#39; });
+  const status = element(&#39;div&#39;, box, &#39;&#39;, { class: &#39;status&#39;, role: &#39;status&#39;, &#39;aria-live&#39;: &#39;polite&#39; });
+  const summary = element(&#39;p&#39;, box, &#39;&#39;, { class: &#39;summary&#39; });
+  const result = element(&#39;a&#39;, box, &#39;&#39;, { class: &#39;result&#39;, target: &#39;_blank&#39;, rel: &#39;noopener noreferrer&#39; });
+  result.hidden = true;
+  const recovery = element(&#39;div&#39;, box, &#39;&#39;, { class: &#39;recovery&#39; });
+  recovery.hidden = true;
+  const recoveryText = element(&#39;p&#39;, recovery);
+  const resume = element(&#39;button&#39;, recovery, &#39;Finish saved playlist&#39;, { type: &#39;button&#39; });
+  const discard = element(&#39;button&#39;, recovery, &#39;Clear saved attempt&#39;, { type: &#39;button&#39; });
+  element(&#39;small&#39;, recovery, &#39;Clearing this record leaves any created playlist on YouTube.&#39;);
+  const previousFocus = document.activeElement;
+  document.documentElement.append(host);
+  if (list.value) count.focus();
+  else list.focus();
+
+  function showLink(job) {
+    if (!job?.destination || !/^[A-Za-z0-9_-]{2,150}$/.test(job.destination)) {
+      result.hidden = true;
+      return;
+    }
+    result.href = ORIGIN + &#39;/playlist?list=&#39; + encodeURIComponent(job.destination);
+    result.textContent = &#39;Open “&#39; + job.title + &#39;” on YouTube&#39;;
+    result.hidden = false;
+  }
+
+  function updateRecovery() {
+    recovery.hidden = !journal || running;
+    if (!journal) return;
+    showLink(journal);
+    const sameAccount = journal.account === account;
+    recoveryText.textContent = !sameAccount
+      ? &#39;A saved attempt belongs to another YouTube account. Switch back to that account to continue.&#39;
+      : journal.destination
+        ? &#39;A playlist was created but has not been fully verified. Continuing checks its existing videos before adding any missing ones.&#39;
+        : &#39;A creation request was started, but its result is unknown. Check the YouTube Playlists page for “&#39; +
+          journal.title +
+          &#39;” before clearing this record.&#39;;
+    resume.hidden = !journal.destination || !sameAccount;
+  }
+
+  function save(job) {
+    journal = job;
+    try {
+      if (job) sessionStorage.setItem(STORE, JSON.stringify(job));
+      else sessionStorage.removeItem(STORE);
+    } catch {
+      summary.textContent = &#39;Recovery storage is unavailable. Keep this panel open until completion.&#39;;
+    }
+    if (job?.destination) showLink(job);
+  }
+  const core = makeCore({
+    post,
+    account,
+    randomInt,
+    delay,
+    cancelled: () =&gt; stopped,
+    save,
+    progress: (message) =&gt; {
+      if (!stopped) status.textContent = message;
+    },
+    summary: (message) =&gt; (summary.textContent = message)
+  });
+  try {
+    const saved = sessionStorage.getItem(STORE);
+    if (saved) {
+      const value = JSON.parse(saved);
+      core.validateJob(value);
+      journal = value;
+      updateRecovery();
+    }
+  } catch {
+    status.textContent =
+      &#39;A saved attempt could not be read. Check YouTube playlists before creating another copy.&#39;;
+  }
+
+  function setRunning(value) {
+    running = value;
+    [list, count, title, check, close, resume, discard].forEach((el) =&gt; (el.disabled = value));
+    create.disabled = value || !!journal;
+    stop.hidden = !value;
+    stop.disabled = false;
+    updateRecovery();
+  }
+  async function execute(continuing) {
+    if (running) return;
+    stopped = false;
+    result.hidden = true;
+    summary.textContent = &#39;&#39;;
+    setRunning(true);
+    try {
+      const job = continuing
+        ? await core.finish(journal)
+        : await core.run({
+            source: list.value,
+            count: count.value,
+            title: title.value,
+            checkPlayback: check.checked
+          });
+      status.textContent = &#39;Done. &#39; + job.ids.length + &#39; distinct videos; the saved order was verified.&#39;;
+      showLink(job);
+    } catch (error) {
+      status.textContent = error.message || &#39;The request could not be completed.&#39;;
+      if (journal)
+        status.textContent += journal.destination
+          ? &#39;\nA partial or complete playlist exists. Its address is below.&#39;
+          : &#39;\nA playlist may already exist. Check YouTube playlists before retrying.&#39;;
+    } finally {
+      setRunning(false);
+    }
+  }
+  form.addEventListener(&#39;submit&#39;, (event) =&gt; {
+    event.preventDefault();
+    if (!journal) execute(false);
+  });
+  resume.addEventListener(&#39;click&#39;, () =&gt; {
+    if (journal?.account === account) execute(true);
+  });
+  discard.addEventListener(&#39;click&#39;, () =&gt; {
+    save(null);
+    setRunning(false);
+    status.textContent = &#39;Saved attempt cleared.&#39;;
+    result.hidden = true;
+  });
+  stop.addEventListener(&#39;click&#39;, () =&gt; {
+    stopped = true;
+    stop.disabled = true;
+    status.textContent = writing
+      ? &#39;Stopping after the current write finishes…&#39;
+      : &#39;Stopping after the current requests finish…&#39;;
+  });
+  const beforeUnload = (event) =&gt; {
+    if (running) {
+      event.preventDefault();
+      event.returnValue = &#39;&#39;;
+    }
+  };
+  window.addEventListener(&#39;beforeunload&#39;, beforeUnload);
+
+  function dismiss() {
+    if (!running) {
+      window.removeEventListener(&#39;beforeunload&#39;, beforeUnload);
+      host.remove();
+      previousFocus?.focus?.();
+    }
+  }
+  close.addEventListener(&#39;click&#39;, dismiss);
+  shadow.addEventListener(&#39;keydown&#39;, (event) =&gt; {
+    if (event.key === &#39;Escape&#39;) {
+      event.preventDefault();
+      dismiss();
+    }
+    if (event.key === &#39;Tab&#39;) {
+      const focusable = [...shadow.querySelectorAll(&#39;input,button,a[href]&#39;)].filter(
+        (el) =&gt; !el.disabled &amp;&amp; !el.hidden &amp;&amp; el.getClientRects().length
+      );
+      const first = focusable[0],
+        last = focusable.at(-1);
+      if (event.shiftKey &amp;&amp; shadow.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey &amp;&amp; shadow.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  });
+  setRunning(false);
+}
+
+launchYouTubeSampler(makeSamplerCore);
+</pre>
+  </details>
+  <noscript><p>Enable JavaScript to use the import and copy controls. The draggable bookmark link is available above.</p></noscript>
+</main>
+<script>
+  'use strict';
+  const bookmark = document.getElementById('bookmark');
+  const bookmarkURL = bookmark.getAttribute('href');
+  const bookmarkName = bookmark.textContent;
+  const field = document.getElementById('bookmark-code');
+  const status = document.getElementById('install-status');
+  field.value = bookmarkURL;
+
+  function download(filename, type, text) {
+    const url = URL.createObjectURL(new Blob([text], { type }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  bookmark.addEventListener('click', (event) => {
+    event.preventDefault();
+    status.textContent = 'Drag the bookmark to your toolbar, then open www.youtube.com to use it.';
+  });
+
+  document.getElementById('copy-code').addEventListener('click', async () => {
+    field.focus();
+    field.select();
+    try {
+      await navigator.clipboard.writeText(bookmarkURL);
+      status.textContent = 'Bookmark URL copied.';
+    } catch {
+      status.textContent = 'The URL is selected. Use your usual Copy shortcut.';
+    }
+  });
+
+  document.getElementById('export-bookmark').addEventListener('click', () => {
+    const entry = document.createElement('a');
+    entry.setAttribute('href', bookmarkURL);
+    entry.textContent = bookmarkName;
+    const header = '<!DOCTYPE NETSCAPE-Bookmark-file-1>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n<title>Bookmarks</title>\n<h1>Bookmarks</h1>\n';
+    download('random-sample-bookmark.html', 'text/html;charset=utf-8', header + '<DL><p>\n<DT>' + entry.outerHTML + '\n</DL><p>\n');
+  });
+
+  document.getElementById('download-source').addEventListener('click', () => {
+    download('random-sample.js', 'text/javascript;charset=utf-8', document.getElementById('source-code').textContent);
+  });
+</script>
+</body>
+</html>

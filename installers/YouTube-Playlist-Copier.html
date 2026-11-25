@@ -1,0 +1,1085 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Copy Videos · YouTube bookmarklet</title>
+  <style>
+    :root { color-scheme: light dark; font: 17px/1.55 system-ui, sans-serif; color: #223427; background: #faf9f4; }
+    body { margin: 0; }
+    main { width: min(44rem, calc(100% - 3rem)); margin: 3rem auto; }
+    h1, h2 { line-height: 1.15; }
+    h1 { font-size: clamp(2.1rem, 7vw, 3.6rem); margin: .3rem 0 .6rem; }
+    h2 { font-size: 1.35rem; margin: 1.7rem 0 .55rem; }
+    p { margin: .6rem 0; }
+    .meta { font-weight: 650; }
+    .install { margin: 1.6rem 0; padding: .3rem 1.25rem 1.1rem; border: 1px solid #b5c7b7; border-radius: .5rem; background: #eff3eb; }
+    .install h2 { margin: .8rem 0 .4rem; }
+    #bookmark { display: inline-block; min-width: 2.4rem; padding: .18rem .6rem; text-align: center; border-radius: .35rem; background: #235638; color: white; text-decoration: none; font-size: 1.45rem; font-weight: 700; vertical-align: middle; }
+    details { margin: 1rem 0; border-block-start: 1px solid #b5c7b7; padding-top: .75rem; }
+    summary { cursor: pointer; font-weight: 650; }
+    button { font: inherit; padding: .32rem .7rem; cursor: pointer; }
+    textarea, pre { box-sizing: border-box; width: 100%; padding: .6rem; font: .84rem/1.45 ui-monospace, monospace; }
+    textarea { resize: vertical; }
+    pre { overflow: auto; max-height: 22rem; }
+    li { margin-bottom: .4rem; }
+    :focus-visible { outline: 3px solid #3779b5; outline-offset: 3px; }
+    @media (prefers-color-scheme: dark) {
+      :root { color: #e6eee7; background: #17231b; }
+      .install { background: #223528; border-color: #597360; }
+      #bookmark { background: #b1dfbc; color: #15271a; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="meta">YouTube · Version 1.3.0</p>
+    <h1>Copy Videos</h1>
+    <p>Copy videos from the open YouTube playlist into an existing destination playlist you choose.</p>
+  </header>
+  <section class="install">
+    <h2>Install in Firefox</h2>
+    <p>Drag <a id="bookmark" draggable="true" href="javascript:void%20function()%7B(()=%3E%7B%22use%20strict%22;function%20e(e)%7Blet%20t=String(e%7C%7C%22%22).trim();if(/%5Ehttps%3F:/i.test(t))%7Bconst%20e=new%20URL(t);if(!%5B%22www.youtube.com%22,%22youtube.com%22,%22m.youtube.com%22%5D.includes(e.hostname)%7C%7Ce.username%7C%7Ce.password%7C%7Ce.port)%7Bthrow%20new%20Error(%22Enter%20a%20YouTube%20playlist%20URL%20or%20playlist%20ID.%22)%7Dt=e.searchParams.get(%22list%22)%7C%7C%22%22%7Dif(!/%5E%5BA-Za-z0-9_-%5D%7B2,150%7D%24/.test(t))%7Bthrow%20new%20Error(%22Enter%20a%20playlist%20ID%20or%20a%20YouTube%20URL%20containing%20list=.%22)%7Dif(t.startsWith(%22RD%22))%7Bthrow%20new%20Error(%22Choose%20a%20saved%20playlist.%20Automatically%20generated%20Mixes%20are%20not%20supported.%22)%7Dreturn%20t%7Dfunction%20t(e)%7Bfunction%20t(t)%7Bconst%20n=e(t);return%20typeof%20n===%22string%22%26%26/%5Ba-z0-9%5D/i.test(n)%3Fn:%22%22%7Dconst%20n=t(%22DELEGATED_SESSION_ID%22)%7C%7Ct(%22CHANNEL_ID%22);const%20o=t(%22DATASYNC_ID%22)%7C%7Ct(%22USER_SESSION_ID%22);return%20n%7C%7Co%3FJSON.stringify(%5Bn,o%5D):null%7Dfunction%20n(t,n)%7Bconst%20o=n%26%26%22mmrpgs:copy-videos:destination:v1:%22%2Bn;return%7Bkey:o,read()%7Bif(!t%7C%7C!o)return%22%22;try%7Bconst%20n=t.getItem(o);return%20n%3Fe(n):%22%22%7Dcatch%7Breturn%22%22%7D%7D,save(n)%7Bconst%20i=e(n);if(!t%7C%7C!o)return%20false;try%7Bt.setItem(o,i);return%20true%7Dcatch%7Breturn%20false%7D%7D%7D%7Dfunction%20o(t)%7B%22use%20strict%22;const%20n=e(t.destination);const%20o=5e3;const%20i=e=%3Etypeof%20e===%22string%22%26%26/%5E%5BA-Za-z0-9_-%5D%7B11%7D%24/.test(e);const%20s=e=%3Etypeof%20e===%22string%22%3Fe:e%3F.simpleText%7C%7Ce%3F.content%7C%7Ce%3F.runs%3F.map(e=%3Ee.text%7C%7C%22%22).join(%22%22)%7C%7C%22%22;const%20a=e=%3E%7Bthrow%20new%20Error(e)%7D;const%20r=()=%3E%7Bif(t.cancelled%3F.())throw%20Object.assign(new%20Error(%22Canceled.%20Completed%20additions%20are%20kept.%22),%7Bcanceled:true%7D)%7D;const%20d=e=%3Et.progress%3F.(e);function%20l(e,t)%7Bconst%20n=%5B%5D,o=%5Be%5D,i=new%20WeakSet;while(o.length)%7Bconst%20e=o.pop();if(!e%7C%7Ctypeof%20e!==%22object%22%7C%7Ci.has(e))continue;i.add(e);if(Object.hasOwn(e,t))n.push(e%5Bt%5D);const%20s=Object.values(e);for(let%20e=s.length-1;e%3E=0;e--)if(s%5Be%5D%26%26typeof%20s%5Be%5D===%22object%22)o.push(s%5Be%5D)%7Dreturn%20n%7Dfunction%20c(e,t)%7Bconst%20n=e.contents%7C%7Ce.items;if(!Array.isArray(n))a(%22YouTube%20returned%20an%20unreadable%20playlist%20page.%20No%20more%20videos%20were%20added.%22);const%20o=%5B%5D,r=%5B%5D;for(const%20e%20of%20n)%7Bconst%20n=e.richItemRenderer%3F.content%7C%7Ce;const%20d=n.playlistVideoRenderer%7C%7Cn.videoRenderer%7C%7Cn.gridVideoRenderer%7C%7Cn.reelItemRenderer%7C%7Cn.shortsLockupViewModel;if(d)%7Bconst%20e=d.videoId%7C%7Cd.onTap%3F.innertubeCommand%3F.reelWatchEndpoint%3F.videoId%7C%7C%22%22,t=s(d.title)%7C%7Cs(d.headline)%7C%7Cs(d.overlayMetadata%3F.primaryText);o.push(%7Bid:e,title:t%7C%7Ce,available:i(e)%26%26d.isPlayable!==false%26%26!/%5E%5C%5B%3F(%3F:private%7Cdeleted%7Cunavailable)%20video%5C%5D%3F%24/i.test(t.trim())%7D)%7Delse%20if(n.lockupViewModel)%7Bconst%20e=n.lockupViewModel;if(e.contentType!==%22LOCKUP_CONTENT_TYPE_VIDEO%22)a(%22A%20non-video%20item%20appeared%20inside%20the%20playlist%20video%20list.%20No%20more%20videos%20were%20added.%22);const%20r=e.contentId%7C%7C%22%22,d=s(e.metadata%3F.lockupMetadataViewModel%3F.title),l=e.rendererContext%3F.commandContext%3F.onTap%3F.innertubeCommand%3F.watchEndpoint;if(l%3F.playlistId%26%26!%5Bt,%22VL%22%2Bt%5D.includes(l.playlistId))a(%22A%20video%20belongs%20to%20a%20different%20playlist.%20No%20more%20videos%20were%20added.%22);o.push(%7Bid:r,title:d%7C%7Cr,available:i(r)%26%26e.isPlayable!==false%26%26!/%5E%5C%5B%3F(%3F:private%7Cdeleted%7Cunavailable)%20video%5C%5D%3F%24/i.test(d.trim())%7D)%7Delse%20if(n.continuationItemRenderer%7C%7Cn.continuationItemViewModel)%7Bconst%20e=l(n.continuationItemRenderer%7C%7Cn.continuationItemViewModel,%22continuationCommand%22).map(e=%3Ee.token).filter(e=%3Etypeof%20e===%22string%22%26%26e);if(!e.length)a(%22A%20playlist%20page%20could%20not%20be%20followed.%20No%20more%20videos%20were%20added.%22);r.push(...e)%7Delse%20if(n.itemSectionRenderer)%7Bconst%20e=n.itemSectionRenderer;if(e.targetId%26%26!%5Bt,%22VL%22%2Bt%5D.includes(e.targetId))a(%22An%20unrelated%20section%20appeared%20inside%20the%20playlist%20video%20list.%22);const%20i=c(e,t);o.push(...i.rows);if(i.next)r.push(i.next)%7Delse%20if(!n.messageRenderer)a(%22YouTube%20returned%20an%20unfamiliar%20playlist%20entry.%20No%20more%20videos%20were%20added.%22)%7Dfor(const%20t%20of%20e.continuations%7C%7C%5B%5D)%7Bif(!t.nextContinuationData%3F.continuation)a(%22An%20unfamiliar%20playlist%20continuation%20was%20returned.%22);r.push(t.nextContinuationData.continuation)%7Dconst%20d=%5B...new%20Set(r)%5D;if(d.length%3E1)a(%22YouTube%20returned%20ambiguous%20playlist%20pages.%22);return%7Brows:o,next:d%5B0%5D%7C%7Cnull%7D%7Dfunction%20u(e)%7Bconst%20t=e.contents%3F.twoColumnBrowseResultsRenderer%3F.tabs%7C%7Ce.contents%3F.singleColumnBrowseResultsRenderer%3F.tabs;if(t)%7Bconst%20e=t.find(e=%3Ee.tabRenderer%3F.selected)%3F.tabRenderer%7C%7C(t.length===1%3Ft%5B0%5D.tabRenderer:null);return%20e%3F.content%7C%7C%7B%7D%7Dreturn%20e.contents%7C%7C%7B%7D%7Dfunction%20p(e,t)%7Bconst%20n=u(e),o=%5B%22playlistVideoListRenderer%22,%22itemSectionRenderer%22,%22richGridRenderer%22,%22gridRenderer%22,%22sectionListRenderer%22%5D;for(const%20e%20of%20o)%7Bconst%20o=l(n,e).filter(e=%3E%5Bt,%22VL%22%2Bt%5D.includes(e.playlistId)%7C%7C%5Bt,%22VL%22%2Bt%5D.includes(e.targetId));if(o.length===1)return%20o%5B0%5D;if(o.length%3E1)a(%22The%20playlist%20contains%20multiple%20matching%20video%20lists.%20No%20more%20videos%20were%20added.%22)%7Dconst%20i=l(n,%22playlistVideoListRenderer%22).filter(e=%3E!e.playlistId);if(i.length===1)return%20i%5B0%5D;for(const%20e%20of%5B%22richGridRenderer%22,%22gridRenderer%22%5D)if(n%5Be%5D%26%26!n%5Be%5D.playlistId%26%26(!n%5Be%5D.targetId%7C%7C%5B%22browse-feed%22,%22rich-grid%22,%22playlist-video-list%22%5D.includes(n%5Be%5D.targetId)))return%20n%5Be%5D;return%20null%7Dfunction%20f(e,t)%7Bconst%20n=l(e.header,%22playlistHeaderRenderer%22).filter(e=%3E!e.playlistId%7C%7C%5Bt,%22VL%22%2Bt%5D.includes(e.playlistId));const%20o=l(e.sidebar,%22playlistSidebarPrimaryInfoRenderer%22),i=l(e.metadata,%22playlistMetadataRenderer%22)%5B0%5D;const%20a=e.header%3F.pageHeaderRenderer,r=l(a%3F.content%3F.pageHeaderViewModel%3F.metadata,%22metadataParts%22).flat().map(e=%3Es(e.text));const%20d=%5B...r%5D;let%20c=null;for(const%20e%20of%5B...n,...o%5D)d.push(s(e.numVideosText),...(Array.isArray(e.stats)%3Fe.stats:%5B%5D).map(s),...(Array.isArray(e.briefStats)%3Fe.briefStats:%5B%5D).map(s),...(Array.isArray(e.byline)%3Fe.byline:%5B%5D).map(e=%3Es(e.playlistBylineRenderer%3F.text)));for(const%20e%20of%20d)%7Bconst%20t=e.trim().match(/%5E(%5B%5Cd,%5D%2B)%5Cs%2Bvideos%3F%5Cb/i);if(t)%7Bconst%20e=Number(t%5B1%5D.replaceAll(%22,%22,%22%22));if(Number.isSafeInteger(e))c=Math.max(c%7C%7C0,e)%7Delse%20if(/%5Eno%20videos%5B.!%5D%3F%24/i.test(e.trim())%26%26c===null)c=0%7Dreturn%7Btitle:i%3F.title%7C%7Ca%3F.pageTitle%7C%7Cs(n%5B0%5D%3F.title)%7C%7Cs(o%5B0%5D%3F.title)%7C%7Ct,declared:c,editable:n.find(e=%3Etypeof%20e.isEditable===%22boolean%22)%3F.isEditable,identified:!!i%7C%7Cn.some(e=%3E%5Bt,%22VL%22%2Bt%5D.includes(e.playlistId))%7D%7Dasync%20function%20h(e,n,o)%7Br();let%20i=await%20t.post(%22browse%22,%7BbrowseId:%22VL%22%2Be,params:%22wgYCCAA=%22%7D);const%20h=l(i.alerts,%22alertRenderer%22).filter(e=%3Ee.type===%22ERROR%22);if(h.length)a(n%2B%22:%20%22%2B(s(h%5B0%5D.text)%7C%7C%22Playlist%20unavailable.%22));const%20m=f(i,e),b=u(i);let%20y=p(i,e);const%20g=l(b,%22messageRenderer%22).some(e=%3E/%5E(%3F:this%20playlist%20is%20empty%7Cthis%20playlist%20has%20no%20videos%7C(%3F:there%20are%20)%3Fno%20videos(%3F:%20in%20this%20playlist)%3F(%3F:%20yet)%3F)%5B.!%5D%3F%24/i.test(s(e.text).trim()));if(!y%26%26m.identified%26%26(m.declared===0%7C%7Cm.declared===null%26%26g)%26%26!%5B%22playlistVideoRenderer%22,%22lockupViewModel%22,%22videoRenderer%22%5D.some(e=%3El(b,e).length)%26%26!l(b,%22continuationCommand%22).length)return%7B...m,rows:%5B%5D,count:0%7D;if(!y)a(n%2B%22:%20the%20playlist%20video%20section%20could%20not%20be%20identified.%20No%20videos%20were%20added%20from%20this%20scan.%22);if(y.contents===undefined%26%26y.items===undefined%26%26m.declared===0%26%26!y.continuations%3F.length)y=%7B...y,contents:%5B%5D%7D;let%20w=y.targetId%7C%7C%22playlist-video-list%22;const%20v=%5B%5D,x=new%20Set;if(typeof%20y.isEditable===%22boolean%22)m.editable=y.isEditable;for(let%20s=0;s%3C1e3;s%2B%2B)%7Br();const%20s=c(y,e);v.push(...s.rows);d(n%2B%22:%20%22%2Bv.length.toLocaleString()%2B%22%20entries%22);o%3F.(%7B...m,rows:v,count:Math.max(v.length,m.declared%7C%7C0)%7D);if(!s.next)return%7B...m,rows:v,count:Math.max(v.length,m.declared%7C%7C0)%7D;if(x.has(s.next))a(n%2B%22:%20YouTube%20repeated%20a%20page.%20No%20more%20videos%20were%20added.%22);x.add(s.next);i=await%20t.post(%22browse%22,%7Bcontinuation:s.next%7D);const%20u=i.continuationContents%7C%7C%7B%7D;const%20f=u.playlistVideoListContinuation%7C%7Cu.itemSectionContinuation%7C%7Cu.gridContinuation%7C%7Cu.richGridContinuation%7C%7Cu.sectionListContinuation;if(f)%7By=f;continue%7Dconst%20h=%5B%5D;for(const%20e%20of%5Bi.onResponseReceivedActions,i.onResponseReceivedEndpoints,i.onResponseReceivedCommands%5D)for(const%20t%20of%5B%22appendContinuationItemsAction%22,%22reloadContinuationItemsCommand%22%5D)h.push(...l(e,t));let%20b=h.filter(e=%3Ee.targetId===w);if(!b.length)b=h.filter(t=%3E%5Be,%22VL%22%2Be%5D.includes(t.targetId));if(!b.length)b=h.filter(e=%3E!e.targetId%26%26Array.isArray(e.continuationItems));if(b.length!==1)a(n%2B%22:%20the%20next%20page%20could%20not%20be%20identified.%20No%20more%20videos%20were%20added.%22);const%20g=b%5B0%5D,I=p(%7Bcontents:g.continuationItems%7D,e);y=I%7C%7C%7Bcontents:g.continuationItems%7D;w=I%3F.targetId%7C%7Cg.targetId%7C%7Cw%7Da(n%2B%22:%20the%20playlist%20did%20not%20finish%20loading.%20No%20more%20videos%20were%20added.%22)%7Dasync%20function%20m(s)%7Bconst%20c=e(s);if(c===n)a(%22This%20is%20the%20destination%20playlist.%20Open%20the%20playlist%20to%20copy,%20then%20open%20the%20tool%20again.%22);t.save%3F.(null);const%20u=await%20h(c,%22Reading%20source%22);const%20p=new%20Map;let%20f=0,m=0;for(const%20e%20of%20u.rows)%7Bif(!e.available)%7Bf%2B%2B;continue%7Dif(p.has(e.id))%7Bm%2B%2B;continue%7Dp.set(e.id,e)%7Dconst%20b=%5B...p.keys()%5D;t.source%3F.(%7Bid:c,title:u.title,rows:u.rows,ids:b%7D);r();async%20function%20y()%7Blet%20e=%7Btitle:n,rows:%5B%5D,count:0%7D;try%7Breturn%7B...await%20h(n,%22Checking%20existing%20videos%22,t=%3E%7Be=%7B...t,rows:t.rows.slice()%7D%7D),incomplete:false%7D%7Dcatch(t)%7Bif(t.fatal%7C%7Ct.canceled)throw%20t;return%7B...e,incomplete:true%7D%7D%7Dconst%20g=await%20y();if(g.editable===false)a(%22This%20account%20cannot%20edit%20the%20destination.%20Choose%20an%20editable%20destination%20playlist.%22);let%20w=new%20Set(g.rows.map(e=%3Ee.id).filter(i)),v=g.count;const%20x=b.filter(e=%3E!w.has(e));const%20I=%7BsourceTitle:u.title,destinationTitle:g.title,sourceEntries:u.rows.length,eligible:b.length,already:b.length-x.length,repeated:m,unavailable:f,omitted:Math.max(0,u.count-u.rows.length),added:0,rejected:0,noRoom:0,uncertain:0,duplicateCheckIncomplete:g.incomplete%7D;const%20E=%7Bversion:2,account:t.account,source:c,destination:n,ids:b,pending:null%7D;const%20C=()=%3Et.summary%3F.(%7B...I%7D);const%20T=()=%3Et.save%3F.(E);T();C();const%20S=e=%3E%7Bfor(const%20t%20of%20e)if(!w.has(t))%7Bw.add(t);v%2B%2B;I.added%2B%2B%7DC()%7D;async%20function%20R(e)%7Br();e=e.filter(e=%3E!w.has(e));if(!e.length)return;const%20s=Math.max(0,o-v);if(e.length%3Es)%7BI.noRoom%2B=e.length-s;e=e.slice(0,s);C()%7Dif(!e.length)return;E.pending=%7Bids:e%7D;T();d(%22Adding%20videos:%20%22%2BI.added.toLocaleString()%2B%22%20added%20%5Cxb7%20%22%2Bx.length.toLocaleString()%2B%22%20to%20process%22);let%20a,u;try%7Ba=await%20t.post(%22browse/edit_playlist%22,%7BplaylistId:n,actions:e.map(e=%3E(%7Baction:%22ACTION_ADD_VIDEO%22,addedVideoId:e%7D))%7D,%7Bwrite:true,source:c,ids:e%7D)%7Dcatch(e)%7Bu=e%7Dif(a%3F.status===%22STATUS_SUCCEEDED%22)%7BS(e);E.pending=null;T();r();return%7Dif(u%3F.fatal%7C%7Cu%3F.canceled)throw%20u;r();const%20p=new%20Set(l(a,%22playlistEditVideoAddedResultData%22).map(e=%3Ee.videoId).filter(i));S(e.filter(e=%3Ep.has(e)));let%20f=e.filter(e=%3E!w.has(e));E.pending=null;T();if(!f.length)return;const%20h=a%3F.status===%22STATUS_FAILED%22%7C%7Cu%3F.httpStatus===400;if(h)%7Bif(f.length===1)%7BI.rejected%2B%2B;C();return%7Dconst%20e=Math.ceil(f.length/2);await%20R(f.slice(0,e));await%20R(f.slice(e));return%7Dconst%20m=await%20y(),b=new%20Set(m.rows.map(e=%3Ee.id).filter(i));S(f.filter(e=%3Eb.has(e)));v=Math.max(v,m.count);for(const%20e%20of%20b)w.add(e);f=f.filter(e=%3E!b.has(e));I.uncertain%2B=f.length;I.duplicateCheckIncomplete%7C%7C=m.incomplete;C()%7Dtry%7Bfor(let%20e=0;e%3Cx.length;e%2B=50)%7Br();await%20R(x.slice(e,e%2B50))%7Dr();C();return%20I%7Dfinally%7Bt.save%3F.(null)%7D%7Dreturn%7Bdestination:n,readPlaylist:h,run:m%7D%7Dfunction%20i()%7Bconst%20i=%22https://www.youtube.com%22;const%20s=%22youtube-playlist-copier-panel%22;if(location.origin!==i)%7Balert(%22Open%20the%20source%20playlist%20at%20https://www.youtube.com,%20then%20click%20the%20%2B%20bookmark.%22);return%7Dif(document.getElementById(s))return;const%20a=e=%3Ewindow.ytcfg%3F.get%3F.(e)%3F%3Fwindow.yt%3F.config_%3F.%5Be%5D;const%20r=a(%22INNERTUBE_CONTEXT%22);if(!r%3F.client%7C%7Ca(%22LOGGED_IN%22)===false)%7Balert(%22Sign%20in%20to%20YouTube%20before%20opening%20Copy%20Videos.%22);return%7Dconst%20d=t(a);const%20l=()=%3EJSON.stringify(%5Ba(%22SESSION_INDEX%22)%3F%3F0,a(%22DELEGATED_SESSION_ID%22)%7C%7C%22%22,a(%22DATASYNC_ID%22)%7C%7C%22%22%5D);const%20c=l();const%20u=JSON.parse(JSON.stringify(r));u.client.hl=%22en%22;const%20p=new%20URL(location.href).searchParams.get(%22list%22)%7C%7C%22%22;let%20f;try%7Bf=window.localStorage%7Dcatch%7B%7Dconst%20h=n(f,d);let%20m=h.read();let%20b=%22%22;let%20y=false;let%20g=false;let%20w=false;let%20v=null;let%20x;let%20I=!m;const%20E=e=%3Enew%20Promise(t=%3EsetTimeout(t,e));const%20C=(e,t)=%3EObject.assign(new%20Error(e),%7Bfatal:true,httpStatus:t%7D);function%20T()%7Bif(l()!==c%7C%7Ct(a)!==d%7C%7Ca(%22LOGGED_IN%22)===false%7C%7C!d%26%26a(%22INNERTUBE_CONTEXT%22)!==r)%7Bthrow%20C(%22The%20selected%20YouTube%20account%20changed.%20Close%20Copy%20Videos%20and%20reopen%20it%20under%20the%20intended%20account.%22)%7Dif((new%20URL(location.href).searchParams.get(%22list%22)%7C%7C%22%22)!==p)%7Bthrow%20C(%22The%20source%20tab%20changed.%20Open%20Copy%20Videos%20again%20on%20the%20intended%20source%20playlist.%22)%7D%7Dfunction%20S(e)%7Btry%7Bf%3F.removeItem(%22youtube-playlist-copier-v1:%22%2Bc%2B%22:%22%2Be)%7Dcatch%7B%7D%7Dconst%20R=e=%3Edocument.cookie.split(%22;%22).map(e=%3Ee.trim()).find(t=%3Et.startsWith(e%2B%22=%22))%3F.slice(e.length%2B1);async%20function%20A(e,t,n=%7B%7D)%7Bconst%20o=e===%22browse/edit_playlist%22;if(!%5B%22browse%22,%22browse/edit_playlist%22%5D.includes(e)%7C%7Co!==!!n.write)throw%20C(%22Unsupported%20operation.%22);if(o%26%26(!b%7C%7Ct.playlistId!==b%7C%7Cp===b%7C%7Cv%3F.destination!==b%7C%7Cv%3F.source!==p%7C%7Cn.source!==p%7C%7C!t.actions%3F.length%7C%7Ct.actions.length%3E50%7C%7Ct.actions.some(e=%3Ee.action!==%22ACTION_ADD_VIDEO%22%7C%7CObject.keys(e).some(e=%3E!%5B%22action%22,%22addedVideoId%22%5D.includes(e))%7C%7C!v.pending%3F.ids.includes(e.addedVideoId))))throw%20C(%22The%20addition%20does%20not%20match%20the%20selected%20source%20and%20destination.%22);for(let%20n=0;n%3C(o%3F1:3);n%2B%2B)%7Bif(w)throw%20Object.assign(new%20Error(%22Canceled.%20Completed%20additions%20are%20kept.%22),%7Bcanceled:true%7D);T();const%20s=R(%22SAPISID%22)%7C%7CR(%22__Secure-3PAPISID%22);if(!s)throw%20C(%22The%20current%20YouTube%20sign-in%20could%20not%20be%20used.%22);const%20r=Math.floor(Date.now()/1e3),d=await%20crypto.subtle.digest(%22SHA-1%22,(new%20TextEncoder).encode(r%2B%22%20%22%2Bs%2B%22%20%22%2Bi));T();if(w)throw%20Object.assign(new%20Error(%22Canceled.%20Completed%20additions%20are%20kept.%22),%7Bcanceled:true%7D);const%20l=%7B%22Content-Type%22:%22application/json%22,Authorization:%22SAPISIDHASH%20%22%2Br%2B%22_%22%2B%5B...new%20Uint8Array(d)%5D.map(e=%3Ee.toString(16).padStart(2,%220%22)).join(%22%22),%22X-Origin%22:i,%22X-Goog-AuthUser%22:String(a(%22SESSION_INDEX%22)%3F%3F0),%22X-Youtube-Client-Name%22:String(a(%22INNERTUBE_CONTEXT_CLIENT_NAME%22)%7C%7C1),%22X-Youtube-Client-Version%22:u.client.clientVersion%7D;if(a(%22DELEGATED_SESSION_ID%22))l%5B%22X-Goog-PageId%22%5D=a(%22DELEGATED_SESSION_ID%22);if(u.client.visitorData)l%5B%22X-Goog-Visitor-Id%22%5D=u.client.visitorData;const%20c=a(%22INNERTUBE_API_KEY%22),p=new%20AbortController,f=setTimeout(()=%3Ep.abort(),3e4);try%7Bconst%20n=await%20fetch(i%2B%22/youtubei/v1/%22%2Be%2B%22%3FprettyPrint=false%22%2B(c%3F%22%26key=%22%2BencodeURIComponent(c):%22%22),%7Bmethod:%22POST%22,credentials:%22same-origin%22,redirect:%22error%22,headers:l,body:JSON.stringify(%7Bcontext:u,...t%7D),signal:p.signal%7D);if(!n.ok)%7Bif(%5B401,403,429%5D.includes(n.status))throw%20C(%22YouTube%20returned%20HTTP%20%22%2Bn.status%2B%22.%20Completed%20additions%20are%20kept.%22,n.status);throw%20Object.assign(new%20Error(%22YouTube%20returned%20HTTP%20%22%2Bn.status%2B%22.%22),%7BhttpStatus:n.status%7D)%7Dconst%20o=await%20n.json();if(o.error)throw%20Object.assign(new%20Error(o.error.message%7C%7C%22YouTube%20rejected%20the%20request.%22),%7BhttpStatus:o.error.code,fatal:%5B401,403,429%5D.includes(o.error.code)%7D);T();if(o.responseContext%3F.visitorData)u.client.visitorData=o.responseContext.visitorData;return%20o%7Dcatch(e)%7Bif(!o%26%26!e.fatal%26%26n%3C2%26%26(e.name===%22AbortError%22%7C%7Ce%20instanceof%20TypeError%7C%7Ce.httpStatus%3E=500))%7Bawait%20E(750*(n%2B1));continue%7Dif(e.name===%22AbortError%22)throw%20new%20Error(%22The%20YouTube%20request%20timed%20out.%22);throw%20e%7Dfinally%7BclearTimeout(f)%7D%7D%7Dconst%20k=document.createElement(%22div%22);k.id=s;Object.assign(k.style,%7Bposition:%22fixed%22,inset:%220%22,zIndex:%222147483647%22%7D);const%20L=k.attachShadow(%7Bmode:%22open%22%7D);function%20D(e,t,n=%22%22,o=%7B%7D)%7Bconst%20i=document.createElement(e);if(n)i.textContent=n;for(const%5Be,t%5Dof%20Object.entries(o))i.setAttribute(e,t);t.append(i);return%20i%7DD(%22style%22,L,%22:host%7Bfont:15px/1.6%20system-ui,sans-serif;color:%23edf5f4;color-scheme:dark%7D*%7Bbox-sizing:border-box%7D.veil%7Bheight:100%25;padding:24px;background:%23091311db;display:grid;place-items:center%7D.box%7Bwidth:min(580px,100%25);max-height:92vh;overflow:auto;background:%23142723;border:1px%20solid%20%23496e62;border-radius:18px;padding:28px;box-shadow:0%2024px%2080px%20%230008%7D.eyebrow%7Bfont-size:11px;letter-spacing:.15em;color:%239ce7c8;font-weight:750%7Dh1%7Bfont-size:29px;line-height:1.15;margin:10px%200%2015px%7Dp%7Bcolor:%23c0d2cb;margin:12px%200%7D.route%7Bpadding:13px%2016px;background:%231d3730;border-radius:9px;margin:18px%200%7D.route%20small%7Bfont-size:11px;letter-spacing:.06em;display:block;text-transform:uppercase%7D.route%20a%7Bcolor:%23c4fbe4;text-decoration:none;overflow-wrap:anywhere%7D.route%20div%2Bdiv%7Bmargin-top:12px%7D.route%20input%7Bbackground:%2310241d;border:1px%20solid%20%2377a996;border-radius:6px;color:%23e9fff5;padding:8px%2010px;margin:6px%200;width:100%25;font:inherit%7D.route%20label%7Bdisplay:block;color:%23c0d2cb%7D.destination-actions%7Bdisplay:flex;gap:8px;align-items:center;flex-wrap:wrap%7Dbutton,.download%7Bborder:1px%20solid%20%2377a996;background:%23254b3d;color:%23e9fff5;border-radius:7px;padding:10px%2014px;font:600%2014px%20system-ui;cursor:pointer;text-decoration:none%7D.primary%7Bbackground:%23bcf1d6;border-color:%23bcf1d6;color:%2312382b%7Dbutton:disabled%7Bopacity:.5;cursor:default%7D.actions%7Bdisplay:flex;gap:9px;flex-wrap:wrap;margin:22px%200%2012px%7D.status%7Bwhite-space:pre-line;overflow-wrap:anywhere;margin:18px%200%7D.summary%7Bfont-size:13px;color:%23cce2d8%7D.note%7Bfont-size:12px;color:%23adcbc0%7D.error%7Bcolor:%23ffd2bb%7D.download%7Bdisplay:inline-block;margin-top:12px;font-size:12px;background:transparent%7D%5Bhidden%5D%7Bdisplay:none!important%7Dinput:focus-visible,button:focus-visible,a:focus-visible%7Boutline:3px%20solid%20%23a9e6ca;outline-offset:3px%7D%22);const%20N=D(%22div%22,L,%22%22,%7Bclass:%22veil%22%7D);const%20O=D(%22section%22,N,%22%22,%7Bclass:%22box%22,role:%22dialog%22,%22aria-modal%22:%22true%22,%22aria-label%22:%22Copy%20YouTube%20playlist%22%7D);D(%22div%22,O,%22YOUTUBE%20PLAYLIST%20COPIER%20%5Cxb7%201.3.0%22,%7Bclass:%22eyebrow%22%7D);D(%22h1%22,O,%22Add%20this%20playlist%5Cu2019s%20videos%22);D(%22p%22,O,%22Copy%20videos%20to%20the%20destination%20you%20choose%20for%20this%20YouTube%20account.%22);const%20_=D(%22div%22,O,%22%22,%7Bclass:%22route%22%7D);const%20V=D(%22div%22,_);const%20j=D(%22div%22,_);const%20U=e=%3Ei%2B%22/playlist%3Flist=%22%2BencodeURIComponent(e);D(%22small%22,V,%22Current%20source%22);const%20Y=D(p%3F%22a%22:%22span%22,V,p%7C%7C%22No%20playlist%20in%20this%20tab%22,p%3F%7Bhref:U(p),target:%22_blank%22,rel:%22noopener%20noreferrer%22%7D:%7B%7D);D(%22small%22,j,%22Destination%22);const%20P=D(%22div%22,j,%22%22,%7Bclass:%22destination-actions%22%7D);const%20M=D(%22a%22,P,%22%22,%7Btarget:%22_blank%22,rel:%22noopener%20noreferrer%22%7D);const%20G=D(%22button%22,P,%22Change%20destination%22,%7Btype:%22button%22%7D);const%20z=D(%22form%22,j);const%20B=D(%22label%22,z,%22Destination%20playlist%20URL%20or%20ID%22);const%20X=D(%22input%22,B,%22%22,%7Btype:%22text%22,autocomplete:%22off%22,spellcheck:%22false%22%7D);const%20H=D(%22div%22,z,%22%22,%7Bclass:%22destination-actions%22%7D);const%20%24=D(%22button%22,H,%22Save%20destination%22,%7Btype:%22submit%22%7D);const%20q=D(%22button%22,H,%22Keep%20current%20destination%22,%7Btype:%22button%22%7D);const%20J=D(%22p%22,z,%22The%20destination%20is%20remembered%20for%20this%20YouTube%20account%20in%20this%20browser.%22,%7Bclass:%22note%22%7D);const%20W=D(%22div%22,O,%22%22,%7Bclass:%22actions%22%7D);const%20F=D(%22button%22,W,%22Add%20videos%22,%7Bclass:%22primary%22,type:%22button%22%7D);const%20K=D(%22button%22,W,%22Cancel%22,%7Btype:%22button%22%7D);const%20Z=D(%22button%22,W,%22Close%22,%7Btype:%22button%22%7D);const%20Q=D(%22div%22,O,%22%22,%7Bclass:%22status%22,role:%22status%22,%22aria-live%22:%22polite%22%7D);const%20ee=D(%22div%22,O,%22%22,%7Bclass:%22summary%22%7D);D(%22p%22,O,%22Duplicate%20checks%20are%20best%20effort.%20Unavailable%20or%20rejected%20entries%20are%20skipped.%20Completed%20additions%20are%20kept%20if%20canceled.%22,%7Bclass:%22note%22%7D);const%20te=D(%22a%22,O,%22Download%20source%20URLs%22,%7Bclass:%22download%22,download:%22YouTube-Source-Backup.txt%22%7D);te.hidden=true;if(!d%7C%7C!f)J.textContent=%22Account-specific%20storage%20is%20unavailable.%20This%20destination%20will%20apply%20only%20while%20this%20panel%20is%20open.%22;function%20ne(e,t=false)%7BQ.textContent=e;Q.setAttribute(%22class%22,t%3F%22status%20error%22:%22status%22)%7Dfunction%20oe()%7BP.hidden=!m%7C%7CI;z.hidden=!I;q.hidden=!m;if(m)M.href=U(m);else%20M.removeAttribute(%22href%22);%24.disabled=g;G.disabled=g;X.disabled=g;q.disabled=g;F.disabled=g%7C%7CI%7C%7C!p%7C%7C!m%7C%7Cp===m;K.disabled=!g%7C%7Cw;Z.disabled=g%7Dfunction%20ie()%7Bif(!p)return%22Open%20a%20source%20playlist%20whose%20address%20contains%20list=,%20then%20open%20Copy%20Videos%20again.%22;if(!m)return%22Choose%20a%20destination%20playlist%20before%20adding%20videos.%22;if(p===m)return%22This%20is%20the%20destination%20playlist.%20Choose%20another%20destination%20or%20open%20a%20different%20source.%22;return%22Ready.%20Click%20Add%20videos%20to%20start.%22%7Dfunction%20se(e)%7Bm=e;I=!e;M.textContent=e;X.value=e;ee.textContent=%22%22;oe();ne(ie())%7DG.addEventListener(%22click%22,()=%3E%7Bif(g)return;I=true;X.value=m;oe();X.focus()%7D);q.addEventListener(%22click%22,()=%3E%7Bif(g)return;I=false;oe();ne(ie());G.focus()%7D);z.addEventListener(%22submit%22,t=%3E%7Bt.preventDefault();if(g)return;try%7BT();const%20t=e(X.value);const%20n=h.save(t);se(t);if(!n)ne(%22Using%20this%20destination%20for%20this%20panel%20only.%20%22%2Bie());if(F.disabled)G.focus();else%20F.focus()%7Dcatch(e)%7Bne(e.message,true);X.focus()%7D%7D);function%20ae(e)%7Bif(!f%7C%7C!h.key%7C%7Ce.storageArea!==f%7C%7Ce.key!==null%26%26e.key!==h.key)return;if(g)y=true;else%20se(h.read())%7Dwindow.addEventListener(%22storage%22,ae);function%20re(e)%7BY.textContent=e.title;try%7Bif(x)URL.revokeObjectURL(x);const%20t=%5B...new%20Set(e.rows.map(e=%3Ee.id).filter(e=%3E/%5E%5BA-Za-z0-9_-%5D%7B11%7D%24/.test(e)))%5D;const%20n=t.map(e=%3Ei%2B%22/watch%3Fv=%22%2Be).join(%22%5Cn%22)%2B%22%5Cn%22;x=URL.createObjectURL(new%20Blob(%5Bn%5D,%7Btype:%22text/plain;charset=utf-8%22%7D));te.href=x;te.hidden=false%7Dcatch%7B%7D%7Dfunction%20de(e)%7BM.textContent=e.destinationTitle;const%20t=%5Be.added.toLocaleString()%2B%22%20added%22,e.already.toLocaleString()%2B%22%20already%20present%22,e.unavailable.toLocaleString()%2B%22%20unavailable%22,e.repeated.toLocaleString()%2B%22%20repeated%20source%20IDs%22%5D;for(const%5Bn,o%5Dof%5B%5Be.rejected,%22rejected%22%5D,%5Be.noRoom,%22did%20not%20fit%22%5D,%5Be.uncertain,%22uncertain%22%5D,%5Be.omitted,%22entries%20not%20supplied%20by%20YouTube%22%5D%5D)%7Bif(n)t.push(n.toLocaleString()%2B%22%20%22%2Bo)%7Dee.textContent=t.join(%22%20%5Cxb7%20%22)%2B(e.duplicateCheckIncomplete%3F%22%5CnThe%20destination%20could%20only%20be%20checked%20for%20some%20duplicates.%22:%22%22)%7Dasync%20function%20le()%7BT();S(b);const%20e=o(%7Bdestination:b,account:c,post:A,cancelled:()=%3Ew,save:e=%3E%7Bv=e%7D,progress:ne,source:re,summary:de%7D);const%20t=await%20e.run(p);const%20n=%5B%22Finished.%20%22%2Bt.added%2B%22%20additions%20accepted.%22%5D;if(t.noRoom)n.push(%22The%20destination%20reached%20its%205,000-entry%20limit.%20%22%2Bt.noRoom%2B%22%20videos%20did%20not%20fit.%22);if(t.rejected)n.push(t.rejected%2B%22%20videos%20were%20rejected%20by%20YouTube.%22);if(t.uncertain)n.push(t.uncertain%2B%22%20additions%20could%20not%20be%20confirmed%20and%20were%20not%20repeated.%22);if(t.duplicateCheckIncomplete)n.push(%22Some%20duplicates%20may%20remain%20because%20the%20destination%20could%20not%20be%20fully%20checked.%22);ne(n.join(%22%20%22))%7DF.addEventListener(%22click%22,async()=%3E%7Bif(F.disabled%7C%7Cg)return;w=false;b=m;g=true;oe();ne(%22Starting%20the%20copy%5Cu2026%22);try%7Bif(navigator.locks%3F.request)%7Bawait%20navigator.locks.request(%22mmrpgs:copy-videos:playlist:%22%2Bb,%7BifAvailable:true%7D,async%20e=%3E%7Bif(!e)throw%20new%20Error(%22Another%20copy%20to%20this%20destination%20is%20running%20in%20another%20tab.%22);await%20le()%7D)%7Delse%7Bthrow%20new%20Error(%22This%20browser%20does%20not%20provide%20Web%20Locks%20for%20YouTube.%20Use%20an%20up-to-date%20Firefox%20window%20so%20copies%20to%20the%20same%20destination%20can%20be%20coordinated.%22)%7D%7Dcatch(e)%7Bne(e.message%7C%7C%22The%20copy%20could%20not%20finish.%20Completed%20additions%20are%20kept.%22,!e.canceled)%7Dfinally%7Bv=null;b=%22%22;g=false;F.textContent=%22Add%20videos%20again%22;if(y)%7By=false;const%20e=Q.textContent;const%20t=Q.getAttribute(%22class%22)===%22status%20error%22;se(h.read());ne(e%2B%22%20The%20destination%20setting%20changed%20in%20another%20tab.%20%22%2Bie(),t)%7Delse%20oe()%7D%7D);K.addEventListener(%22click%22,()=%3E%7Bw=true;oe();ne(%22Canceling%20after%20the%20current%20request.%20Completed%20additions%20will%20be%20kept.%22)%7D);const%20ce=e=%3E%7Bif(g)%7Be.preventDefault();e.returnValue=%22%22%7D%7D;window.addEventListener(%22beforeunload%22,ce);Z.addEventListener(%22click%22,()=%3E%7Bif(g)return;k.remove();window.removeEventListener(%22beforeunload%22,ce);window.removeEventListener(%22storage%22,ae);if(x)URL.revokeObjectURL(x)%7D);document.documentElement.append(k);se(m);if(I)X.focus();else%20if(F.disabled)G.focus();else%20F.focus()%7Di()%7D)()%7D();">+</a> to your Bookmarks Toolbar. The bookmark name is <strong>+</strong>.</p>
+    <p>Open <a href="https://www.youtube.com/">www.youtube.com</a> in the account you want to use, then click the saved bookmark. To update, close the existing panel and replace the old bookmark.</p>
+  </section>
+  <h2>Using Copy Videos</h2>
+  <ul>
+    <li>Choose an editable destination on first use. The tool remembers it for your YouTube account in this browser and lets you change it later.</li>
+    <li>Open a different playlist as the source, review the destination, then click Add videos. Copying preserves source order, skips unavailable entries and checks for existing videos when possible.</li>
+    <li>Download source URLs saves a plain-text list. Cancel stops further requests, and completed additions stay in the destination.</li>
+  </ul>
+  <details>
+    <summary>Import a bookmark or copy its URL</summary>
+    <p>Download the bookmark file and select it under <strong>Import and Backup → Import Bookmarks from HTML</strong> in the Firefox bookmarks manager.</p>
+    <button type="button" id="export-bookmark">Download bookmark file</button>
+    <p><label for="bookmark-code">For manual setup, create a bookmark named <strong>+</strong> and use this entire URL as its address.</label></p>
+    <textarea id="bookmark-code" rows="3" readonly spellcheck="false"></textarea>
+    <button type="button" id="copy-code">Copy bookmark URL</button>
+  </details>
+  <p id="install-status" role="status" aria-live="polite"></p>
+  <details>
+    <summary>Readable JavaScript</summary>
+    <p>The source below is the input used to build this bookmarklet.</p>
+    <button type="button" id="download-source">Download JavaScript</button>
+    <pre id="source-code">// Copy Videos 1.3.0 — regular YouTube
+(() =&gt; {
+  &#39;use strict&#39;;
+
+  // A destination is an explicit saved playlist. Accept a bare playlist ID or
+  // an ordinary YouTube link, including a watch link containing a list parameter.
+  function playlistId(value) {
+    let id = String(value || &#39;&#39;).trim();
+    if (/^https?:/i.test(id)) {
+      const url = new URL(id);
+      if (
+        ![&#39;www.youtube.com&#39;, &#39;youtube.com&#39;, &#39;m.youtube.com&#39;].includes(url.hostname) ||
+        url.username ||
+        url.password ||
+        url.port
+      ) {
+        throw new Error(&#39;Enter a YouTube playlist URL or playlist ID.&#39;);
+      }
+      id = url.searchParams.get(&#39;list&#39;) || &#39;&#39;;
+    }
+    if (!/^[A-Za-z0-9_-]{2,150}$/.test(id)) {
+      throw new Error(&#39;Enter a playlist ID or a YouTube URL containing list=.&#39;);
+    }
+    if (id.startsWith(&#39;RD&#39;)) {
+      throw new Error(&#39;Choose a saved playlist. Automatically generated Mixes are not supported.&#39;);
+    }
+    return id;
+  }
+
+  // SESSION_INDEX is a position in an account switcher, not a persistent identity.
+  // Include both the selected channel and account when available. An account
+  // switcher can offer the same delegated channel to two different logins.
+  function preferenceOwner(config) {
+    function stable(field) {
+      const value = config(field);
+      return typeof value === &#39;string&#39; &amp;&amp; /[a-z0-9]/i.test(value) ? value : &#39;&#39;;
+    }
+    const channel = stable(&#39;DELEGATED_SESSION_ID&#39;) || stable(&#39;CHANNEL_ID&#39;);
+    const account = stable(&#39;DATASYNC_ID&#39;) || stable(&#39;USER_SESSION_ID&#39;);
+    return channel || account ? JSON.stringify([channel, account]) : null;
+  }
+
+  function destinationPreference(storage, owner) {
+    const key = owner &amp;&amp; &#39;mmrpgs:copy-videos:destination:v1:&#39; + owner;
+    return {
+      key,
+      read() {
+        if (!storage || !key) return &#39;&#39;;
+        try {
+          const saved = storage.getItem(key);
+          return saved ? playlistId(saved) : &#39;&#39;;
+        } catch {
+          return &#39;&#39;;
+        }
+      },
+      save(id) {
+        const validated = playlistId(id);
+        if (!storage || !key) return false;
+        try {
+          storage.setItem(key, validated);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+    };
+  }
+
+  function makePlaylistCopier(deps) {
+    &#39;use strict&#39;;
+    const destination = playlistId(deps.destination);
+    const limit = 5000;
+    const validVideo = (id) =&gt; typeof id === &#39;string&#39; &amp;&amp; /^[A-Za-z0-9_-]{11}$/.test(id);
+    const text = (v) =&gt;
+      typeof v === &#39;string&#39;
+        ? v
+        : v?.simpleText || v?.content || v?.runs?.map((r) =&gt; r.text || &#39;&#39;).join(&#39;&#39;) || &#39;&#39;;
+    const fail = (message) =&gt; {
+      throw new Error(message);
+    };
+    const check = () =&gt; {
+      if (deps.cancelled?.())
+        throw Object.assign(new Error(&#39;Canceled. Completed additions are kept.&#39;), { canceled: true });
+    };
+    const say = (s) =&gt; deps.progress?.(s);
+    function find(root, key) {
+      const out = [],
+        stack = [root],
+        seen = new WeakSet();
+      while (stack.length) {
+        const v = stack.pop();
+        if (!v || typeof v !== &#39;object&#39; || seen.has(v)) continue;
+        seen.add(v);
+        if (Object.hasOwn(v, key)) out.push(v[key]);
+        const values = Object.values(v);
+        for (let i = values.length - 1; i &gt;= 0; i--)
+          if (values[i] &amp;&amp; typeof values[i] === &#39;object&#39;) stack.push(values[i]);
+      }
+      return out;
+    }
+    function unpack(scope, playlistId) {
+      const items = scope.contents || scope.items;
+      if (!Array.isArray(items))
+        fail(&#39;YouTube returned an unreadable playlist page. No more videos were added.&#39;);
+      const rows = [],
+        tokens = [];
+      for (const entry of items) {
+        const item = entry.richItemRenderer?.content || entry;
+        const r =
+          item.playlistVideoRenderer ||
+          item.videoRenderer ||
+          item.gridVideoRenderer ||
+          item.reelItemRenderer ||
+          item.shortsLockupViewModel;
+        if (r) {
+          const id = r.videoId || r.onTap?.innertubeCommand?.reelWatchEndpoint?.videoId || &#39;&#39;,
+            title = text(r.title) || text(r.headline) || text(r.overlayMetadata?.primaryText);
+          rows.push({
+            id,
+            title: title || id,
+            available:
+              validVideo(id) &amp;&amp;
+              r.isPlayable !== false &amp;&amp;
+              !/^\[?(?:private|deleted|unavailable) video\]?$/i.test(title.trim())
+          });
+        } else if (item.lockupViewModel) {
+          const model = item.lockupViewModel;
+          if (model.contentType !== &#39;LOCKUP_CONTENT_TYPE_VIDEO&#39;)
+            fail(&#39;A non-video item appeared inside the playlist video list. No more videos were added.&#39;);
+          const id = model.contentId || &#39;&#39;,
+            title = text(model.metadata?.lockupMetadataViewModel?.title),
+            watch = model.rendererContext?.commandContext?.onTap?.innertubeCommand?.watchEndpoint;
+          if (watch?.playlistId &amp;&amp; ![playlistId, &#39;VL&#39; + playlistId].includes(watch.playlistId))
+            fail(&#39;A video belongs to a different playlist. No more videos were added.&#39;);
+          rows.push({
+            id,
+            title: title || id,
+            available:
+              validVideo(id) &amp;&amp;
+              model.isPlayable !== false &amp;&amp;
+              !/^\[?(?:private|deleted|unavailable) video\]?$/i.test(title.trim())
+          });
+        } else if (item.continuationItemRenderer || item.continuationItemViewModel) {
+          const commands = find(
+            item.continuationItemRenderer || item.continuationItemViewModel,
+            &#39;continuationCommand&#39;
+          )
+            .map((c) =&gt; c.token)
+            .filter((t) =&gt; typeof t === &#39;string&#39; &amp;&amp; t);
+          if (!commands.length)
+            fail(&#39;A playlist page could not be followed. No more videos were added.&#39;);
+          tokens.push(...commands);
+        } else if (item.itemSectionRenderer) {
+          const nested = item.itemSectionRenderer;
+          if (nested.targetId &amp;&amp; ![playlistId, &#39;VL&#39; + playlistId].includes(nested.targetId))
+            fail(&#39;An unrelated section appeared inside the playlist video list.&#39;);
+          const part = unpack(nested, playlistId);
+          rows.push(...part.rows);
+          if (part.next) tokens.push(part.next);
+        } else if (!item.messageRenderer)
+          fail(&#39;YouTube returned an unfamiliar playlist entry. No more videos were added.&#39;);
+      }
+      for (const c of scope.continuations || []) {
+        if (!c.nextContinuationData?.continuation)
+          fail(&#39;An unfamiliar playlist continuation was returned.&#39;);
+        tokens.push(c.nextContinuationData.continuation);
+      }
+      const distinct = [...new Set(tokens)];
+      if (distinct.length &gt; 1) fail(&#39;YouTube returned ambiguous playlist pages.&#39;);
+      return { rows, next: distinct[0] || null };
+    }
+    function primary(json) {
+      const tabs =
+        json.contents?.twoColumnBrowseResultsRenderer?.tabs ||
+        json.contents?.singleColumnBrowseResultsRenderer?.tabs;
+      if (tabs) {
+        const selected =
+          tabs.find((t) =&gt; t.tabRenderer?.selected)?.tabRenderer ||
+          (tabs.length === 1 ? tabs[0].tabRenderer : null);
+        return selected?.content || {};
+      }
+      return json.contents || {};
+    }
+    function chooseScope(json, id) {
+      const root = primary(json),
+        keys = [
+          &#39;playlistVideoListRenderer&#39;,
+          &#39;itemSectionRenderer&#39;,
+          &#39;richGridRenderer&#39;,
+          &#39;gridRenderer&#39;,
+          &#39;sectionListRenderer&#39;
+        ];
+      // A playlist&#39;s item section is narrower than its outer section list. The outer
+      // continuation may load recommendations after the playlist has ended.
+      for (const key of keys) {
+        const matches = find(root, key).filter(
+          (s) =&gt; [id, &#39;VL&#39; + id].includes(s.playlistId) || [id, &#39;VL&#39; + id].includes(s.targetId)
+        );
+        if (matches.length === 1) return matches[0];
+        if (matches.length &gt; 1)
+          fail(&#39;The playlist contains multiple matching video lists. No more videos were added.&#39;);
+      }
+      const legacy = find(root, &#39;playlistVideoListRenderer&#39;).filter((s) =&gt; !s.playlistId);
+      if (legacy.length === 1) return legacy[0];
+      // Some saved playlists use a grid directly as the selected tab&#39;s content.
+      for (const key of [&#39;richGridRenderer&#39;, &#39;gridRenderer&#39;])
+        if (
+          root[key] &amp;&amp;
+          !root[key].playlistId &amp;&amp;
+          (!root[key].targetId ||
+            [&#39;browse-feed&#39;, &#39;rich-grid&#39;, &#39;playlist-video-list&#39;].includes(root[key].targetId))
+        )
+          return root[key];
+      return null;
+    }
+    function metadata(json, id) {
+      const headers = find(json.header, &#39;playlistHeaderRenderer&#39;).filter(
+        (h) =&gt; !h.playlistId || [id, &#39;VL&#39; + id].includes(h.playlistId)
+      );
+      const sidebar = find(json.sidebar, &#39;playlistSidebarPrimaryInfoRenderer&#39;),
+        meta = find(json.metadata, &#39;playlistMetadataRenderer&#39;)[0];
+      const modern = json.header?.pageHeaderRenderer,
+        modernParts = find(modern?.content?.pageHeaderViewModel?.metadata, &#39;metadataParts&#39;)
+          .flat()
+          .map((p) =&gt; text(p.text));
+      const texts = [...modernParts];
+      let declared = null;
+      for (const h of [...headers, ...sidebar])
+        texts.push(
+          text(h.numVideosText),
+          ...(Array.isArray(h.stats) ? h.stats : []).map(text),
+          ...(Array.isArray(h.briefStats) ? h.briefStats : []).map(text),
+          ...(Array.isArray(h.byline) ? h.byline : []).map((b) =&gt; text(b.playlistBylineRenderer?.text))
+        );
+      for (const t of texts) {
+        const m = t.trim().match(/^([\d,]+)\s+videos?\b/i);
+        if (m) {
+          const n = Number(m[1].replaceAll(&#39;,&#39;, &#39;&#39;));
+          if (Number.isSafeInteger(n)) declared = Math.max(declared || 0, n);
+        } else if (/^no videos[.!]?$/i.test(t.trim()) &amp;&amp; declared === null) declared = 0;
+      }
+      return {
+        title:
+          meta?.title || modern?.pageTitle || text(headers[0]?.title) || text(sidebar[0]?.title) || id,
+        declared,
+        editable: headers.find((h) =&gt; typeof h.isEditable === &#39;boolean&#39;)?.isEditable,
+        identified: !!meta || headers.some((h) =&gt; [id, &#39;VL&#39; + id].includes(h.playlistId))
+      };
+    }
+    async function readPlaylist(id, label, onPage) {
+      check();
+      let json = await deps.post(&#39;browse&#39;, { browseId: &#39;VL&#39; + id, params: &#39;wgYCCAA=&#39; });
+      const errors = find(json.alerts, &#39;alertRenderer&#39;).filter((a) =&gt; a.type === &#39;ERROR&#39;);
+      if (errors.length) fail(label + &#39;: &#39; + (text(errors[0].text) || &#39;Playlist unavailable.&#39;));
+      const meta = metadata(json, id),
+        root = primary(json);
+      let scope = chooseScope(json, id);
+      const emptyMessage = find(root, &#39;messageRenderer&#39;).some((m) =&gt;
+        /^(?:this playlist is empty|this playlist has no videos|(?:there are )?no videos(?: in this playlist)?(?: yet)?)[.!]?$/i.test(
+          text(m.text).trim()
+        )
+      );
+      if (
+        !scope &amp;&amp;
+        meta.identified &amp;&amp;
+        (meta.declared === 0 || (meta.declared === null &amp;&amp; emptyMessage)) &amp;&amp;
+        ![&#39;playlistVideoRenderer&#39;, &#39;lockupViewModel&#39;, &#39;videoRenderer&#39;].some(
+          (k) =&gt; find(root, k).length
+        ) &amp;&amp;
+        !find(root, &#39;continuationCommand&#39;).length
+      )
+        return { ...meta, rows: [], count: 0 };
+      if (!scope)
+        fail(
+          label +
+            &#39;: the playlist video section could not be identified. No videos were added from this scan.&#39;
+        );
+      if (
+        scope.contents === undefined &amp;&amp;
+        scope.items === undefined &amp;&amp;
+        meta.declared === 0 &amp;&amp;
+        !scope.continuations?.length
+      )
+        scope = { ...scope, contents: [] };
+      let target = scope.targetId || &#39;playlist-video-list&#39;;
+      const rows = [],
+        seen = new Set();
+      if (typeof scope.isEditable === &#39;boolean&#39;) meta.editable = scope.isEditable;
+      for (let p = 0; p &lt; 1000; p++) {
+        check();
+        const part = unpack(scope, id);
+        rows.push(...part.rows);
+        say(label + &#39;: &#39; + rows.length.toLocaleString() + &#39; entries&#39;);
+        onPage?.({ ...meta, rows, count: Math.max(rows.length, meta.declared || 0) });
+        if (!part.next) return { ...meta, rows, count: Math.max(rows.length, meta.declared || 0) };
+        if (seen.has(part.next)) fail(label + &#39;: YouTube repeated a page. No more videos were added.&#39;);
+        seen.add(part.next);
+        json = await deps.post(&#39;browse&#39;, { continuation: part.next });
+        const continuations = json.continuationContents || {};
+        const legacy =
+          continuations.playlistVideoListContinuation ||
+          continuations.itemSectionContinuation ||
+          continuations.gridContinuation ||
+          continuations.richGridContinuation ||
+          continuations.sectionListContinuation;
+        if (legacy) {
+          scope = legacy;
+          continue;
+        }
+        const actions = [];
+        for (const branch of [
+          json.onResponseReceivedActions,
+          json.onResponseReceivedEndpoints,
+          json.onResponseReceivedCommands
+        ])
+          for (const key of [&#39;appendContinuationItemsAction&#39;, &#39;reloadContinuationItemsCommand&#39;])
+            actions.push(...find(branch, key));
+        let matches = actions.filter((a) =&gt; a.targetId === target);
+        if (!matches.length) matches = actions.filter((a) =&gt; [id, &#39;VL&#39; + id].includes(a.targetId));
+        if (!matches.length)
+          matches = actions.filter((a) =&gt; !a.targetId &amp;&amp; Array.isArray(a.continuationItems));
+        if (matches.length !== 1)
+          fail(label + &#39;: the next page could not be identified. No more videos were added.&#39;);
+        const action = matches[0],
+          nested = chooseScope({ contents: action.continuationItems }, id);
+        scope = nested || { contents: action.continuationItems };
+        target = nested?.targetId || action.targetId || target;
+      }
+      fail(label + &#39;: the playlist did not finish loading. No more videos were added.&#39;);
+    }
+    async function run(value) {
+      const source = playlistId(value);
+      if (source === destination)
+        fail(&#39;This is the destination playlist. Open the playlist to copy, then open the tool again.&#39;);
+      // Every run starts fresh. Records from older versions are never consulted.
+      deps.save?.(null);
+      const data = await readPlaylist(source, &#39;Reading source&#39;);
+      const pool = new Map();
+      let unavailable = 0,
+        repeated = 0;
+      for (const row of data.rows) {
+        if (!row.available) {
+          unavailable++;
+          continue;
+        }
+        if (pool.has(row.id)) {
+          repeated++;
+          continue;
+        }
+        pool.set(row.id, row);
+      }
+      const ids = [...pool.keys()];
+      deps.source?.({ id: source, title: data.title, rows: data.rows, ids });
+      check();
+      async function scanDestination() {
+        let partial = { title: destination, rows: [], count: 0 };
+        try {
+          return {
+            ...(await readPlaylist(destination, &#39;Checking existing videos&#39;, (page) =&gt; {
+              partial = { ...page, rows: page.rows.slice() };
+            })),
+            incomplete: false
+          };
+        } catch (e) {
+          if (e.fatal || e.canceled) throw e;
+          return { ...partial, incomplete: true };
+        }
+      }
+      const target = await scanDestination();
+      if (target.editable === false)
+        fail(&#39;This account cannot edit the destination. Choose an editable destination playlist.&#39;);
+      let present = new Set(target.rows.map((r) =&gt; r.id).filter(validVideo)),
+        count = target.count;
+      const todo = ids.filter((id) =&gt; !present.has(id));
+      const result = {
+        sourceTitle: data.title,
+        destinationTitle: target.title,
+        sourceEntries: data.rows.length,
+        eligible: ids.length,
+        already: ids.length - todo.length,
+        repeated,
+        unavailable,
+        omitted: Math.max(0, data.count - data.rows.length),
+        added: 0,
+        rejected: 0,
+        noRoom: 0,
+        uncertain: 0,
+        duplicateCheckIncomplete: target.incomplete
+      };
+      const job = { version: 2, account: deps.account, source, destination, ids, pending: null };
+      const emit = () =&gt; deps.summary?.({ ...result });
+      const save = () =&gt; deps.save?.(job);
+      save();
+      emit();
+      const accept = (batch) =&gt; {
+        for (const id of batch)
+          if (!present.has(id)) {
+            present.add(id);
+            count++;
+            result.added++;
+          }
+        emit();
+      };
+      async function add(batch) {
+        check();
+        batch = batch.filter((id) =&gt; !present.has(id));
+        if (!batch.length) return;
+        const room = Math.max(0, limit - count);
+        if (batch.length &gt; room) {
+          result.noRoom += batch.length - room;
+          batch = batch.slice(0, room);
+          emit();
+        }
+        if (!batch.length) return;
+        job.pending = { ids: batch };
+        save();
+        say(
+          &#39;Adding videos: &#39; +
+            result.added.toLocaleString() +
+            &#39; added · &#39; +
+            todo.length.toLocaleString() +
+            &#39; to process&#39;
+        );
+        let response, error;
+        try {
+          response = await deps.post(
+            &#39;browse/edit_playlist&#39;,
+            {
+              playlistId: destination,
+              actions: batch.map((id) =&gt; ({ action: &#39;ACTION_ADD_VIDEO&#39;, addedVideoId: id }))
+            },
+            { write: true, source, ids: batch }
+          );
+        } catch (e) {
+          error = e;
+        }
+        if (response?.status === &#39;STATUS_SUCCEEDED&#39;) {
+          accept(batch);
+          job.pending = null;
+          save();
+          check();
+          return;
+        }
+        if (error?.fatal || error?.canceled) throw error;
+        check();
+        // Use any individual receipts returned for a partially accepted batch.
+        const receipts = new Set(
+          find(response, &#39;playlistEditVideoAddedResultData&#39;)
+            .map((r) =&gt; r.videoId)
+            .filter(validVideo)
+        );
+        accept(batch.filter((id) =&gt; receipts.has(id)));
+        let missing = batch.filter((id) =&gt; !present.has(id));
+        job.pending = null;
+        save();
+        if (!missing.length) return;
+        const rejected = response?.status === &#39;STATUS_FAILED&#39; || error?.httpStatus === 400;
+        if (rejected) {
+          if (missing.length === 1) {
+            result.rejected++;
+            emit();
+            return;
+          }
+          const middle = Math.ceil(missing.length / 2);
+          await add(missing.slice(0, middle));
+          await add(missing.slice(middle));
+          return;
+        }
+        // A lost reply may still mean success. Check once when possible, then move
+        // on instead of repeating an uncertain write or blocking subsequent batches.
+        const fresh = await scanDestination(),
+          actual = new Set(fresh.rows.map((r) =&gt; r.id).filter(validVideo));
+        accept(missing.filter((id) =&gt; actual.has(id)));
+        count = Math.max(count, fresh.count);
+        for (const id of actual) present.add(id);
+        missing = missing.filter((id) =&gt; !actual.has(id));
+        result.uncertain += missing.length;
+        result.duplicateCheckIncomplete ||= fresh.incomplete;
+        emit();
+      }
+      try {
+        for (let p = 0; p &lt; todo.length; p += 50) {
+          check();
+          await add(todo.slice(p, p + 50));
+        }
+        check();
+        emit();
+        return result;
+      } finally {
+        deps.save?.(null);
+      }
+    }
+    return { destination, readPlaylist, run };
+  }
+
+  function launchPlaylistCopier() {
+    const ORIGIN = &#39;https://www.youtube.com&#39;;
+    const ROOT = &#39;youtube-playlist-copier-panel&#39;;
+    if (location.origin !== ORIGIN) {
+      alert(&#39;Open the source playlist at https://www.youtube.com, then click the + bookmark.&#39;);
+      return;
+    }
+    if (document.getElementById(ROOT)) return;
+    const cfg = (key) =&gt; window.ytcfg?.get?.(key) ?? window.yt?.config_?.[key];
+    const originalContext = cfg(&#39;INNERTUBE_CONTEXT&#39;);
+    if (!originalContext?.client || cfg(&#39;LOGGED_IN&#39;) === false) {
+      alert(&#39;Sign in to YouTube before opening Copy Videos.&#39;);
+      return;
+    }
+    const owner = preferenceOwner(cfg);
+    const identity = () =&gt;
+      JSON.stringify([
+        cfg(&#39;SESSION_INDEX&#39;) ?? 0,
+        cfg(&#39;DELEGATED_SESSION_ID&#39;) || &#39;&#39;,
+        cfg(&#39;DATASYNC_ID&#39;) || &#39;&#39;
+      ]);
+    const account = identity();
+    const context = JSON.parse(JSON.stringify(originalContext));
+    context.client.hl = &#39;en&#39;;
+    const source = new URL(location.href).searchParams.get(&#39;list&#39;) || &#39;&#39;;
+    let storage;
+    try {
+      storage = window.localStorage;
+    } catch {
+      /* The panel can still be used for this visit. */
+    }
+    const preference = destinationPreference(storage, owner);
+    let destination = preference.read();
+    let activeDestination = &#39;&#39;;
+    let preferenceChangedDuringRun = false;
+    let running = false;
+    let stopped = false;
+    let journal = null;
+    let backupURL;
+    let editing = !destination;
+    const delay = (ms) =&gt; new Promise((resolve) =&gt; setTimeout(resolve, ms));
+    const fatal = (message, httpStatus) =&gt;
+      Object.assign(new Error(message), { fatal: true, httpStatus });
+    function accountCheck() {
+      if (
+        identity() !== account ||
+        preferenceOwner(cfg) !== owner ||
+        cfg(&#39;LOGGED_IN&#39;) === false ||
+        (!owner &amp;&amp; cfg(&#39;INNERTUBE_CONTEXT&#39;) !== originalContext)
+      ) {
+        throw fatal(
+          &#39;The selected YouTube account changed. Close Copy Videos and reopen it under the intended account.&#39;
+        );
+      }
+      if ((new URL(location.href).searchParams.get(&#39;list&#39;) || &#39;&#39;) !== source) {
+        throw fatal(&#39;The source tab changed. Open Copy Videos again on the intended source playlist.&#39;);
+      }
+    }
+
+    // Old versions stored unfinished verification records per account and destination.
+    // No such record controls a new run. Remove only the record for this chosen route.
+    function forgetOldRun(id) {
+      try {
+        storage?.removeItem(&#39;youtube-playlist-copier-v1:&#39; + account + &#39;:&#39; + id);
+      } catch {}
+    }
+
+    const cookie = (name) =&gt;
+      document.cookie
+        .split(&#39;;&#39;)
+        .map((x) =&gt; x.trim())
+        .find((x) =&gt; x.startsWith(name + &#39;=&#39;))
+        ?.slice(name.length + 1);
+    async function post(endpoint, payload, flags = {}) {
+      const write = endpoint === &#39;browse/edit_playlist&#39;;
+      if (![&#39;browse&#39;, &#39;browse/edit_playlist&#39;].includes(endpoint) || write !== !!flags.write)
+        throw fatal(&#39;Unsupported operation.&#39;);
+      if (
+        write &amp;&amp;
+        (!activeDestination ||
+          payload.playlistId !== activeDestination ||
+          source === activeDestination ||
+          journal?.destination !== activeDestination ||
+          journal?.source !== source ||
+          flags.source !== source ||
+          !payload.actions?.length ||
+          payload.actions.length &gt; 50 ||
+          payload.actions.some(
+            (a) =&gt;
+              a.action !== &#39;ACTION_ADD_VIDEO&#39; ||
+              Object.keys(a).some((k) =&gt; ![&#39;action&#39;, &#39;addedVideoId&#39;].includes(k)) ||
+              !journal.pending?.ids.includes(a.addedVideoId)
+          ))
+      )
+        throw fatal(&#39;The addition does not match the selected source and destination.&#39;);
+      for (let attempt = 0; attempt &lt; (write ? 1 : 3); attempt++) {
+        if (stopped)
+          throw Object.assign(new Error(&#39;Canceled. Completed additions are kept.&#39;), { canceled: true });
+        accountCheck();
+        const sid = cookie(&#39;SAPISID&#39;) || cookie(&#39;__Secure-3PAPISID&#39;);
+        if (!sid) throw fatal(&#39;The current YouTube sign-in could not be used.&#39;);
+        const stamp = Math.floor(Date.now() / 1000),
+          hash = await crypto.subtle.digest(
+            &#39;SHA-1&#39;,
+            new TextEncoder().encode(stamp + &#39; &#39; + sid + &#39; &#39; + ORIGIN)
+          );
+        accountCheck();
+        if (stopped)
+          throw Object.assign(new Error(&#39;Canceled. Completed additions are kept.&#39;), { canceled: true });
+        const headers = {
+          &#39;Content-Type&#39;: &#39;application/json&#39;,
+          Authorization:
+            &#39;SAPISIDHASH &#39; +
+            stamp +
+            &#39;_&#39; +
+            [...new Uint8Array(hash)].map((n) =&gt; n.toString(16).padStart(2, &#39;0&#39;)).join(&#39;&#39;),
+          &#39;X-Origin&#39;: ORIGIN,
+          &#39;X-Goog-AuthUser&#39;: String(cfg(&#39;SESSION_INDEX&#39;) ?? 0),
+          &#39;X-Youtube-Client-Name&#39;: String(cfg(&#39;INNERTUBE_CONTEXT_CLIENT_NAME&#39;) || 1),
+          &#39;X-Youtube-Client-Version&#39;: context.client.clientVersion
+        };
+        if (cfg(&#39;DELEGATED_SESSION_ID&#39;)) headers[&#39;X-Goog-PageId&#39;] = cfg(&#39;DELEGATED_SESSION_ID&#39;);
+        if (context.client.visitorData) headers[&#39;X-Goog-Visitor-Id&#39;] = context.client.visitorData;
+        const key = cfg(&#39;INNERTUBE_API_KEY&#39;),
+          controller = new AbortController(),
+          timer = setTimeout(() =&gt; controller.abort(), 30000);
+        try {
+          const r = await fetch(
+            ORIGIN +
+              &#39;/youtubei/v1/&#39; +
+              endpoint +
+              &#39;?prettyPrint=false&#39; +
+              (key ? &#39;&amp;key=&#39; + encodeURIComponent(key) : &#39;&#39;),
+            {
+              method: &#39;POST&#39;,
+              credentials: &#39;same-origin&#39;,
+              redirect: &#39;error&#39;,
+              headers,
+              body: JSON.stringify({ context, ...payload }),
+              signal: controller.signal
+            }
+          );
+          if (!r.ok) {
+            if ([401, 403, 429].includes(r.status))
+              throw fatal(
+                &#39;YouTube returned HTTP &#39; + r.status + &#39;. Completed additions are kept.&#39;,
+                r.status
+              );
+            throw Object.assign(new Error(&#39;YouTube returned HTTP &#39; + r.status + &#39;.&#39;), {
+              httpStatus: r.status
+            });
+          }
+          const json = await r.json();
+          if (json.error)
+            throw Object.assign(new Error(json.error.message || &#39;YouTube rejected the request.&#39;), {
+              httpStatus: json.error.code,
+              fatal: [401, 403, 429].includes(json.error.code)
+            });
+          accountCheck();
+          if (json.responseContext?.visitorData)
+            context.client.visitorData = json.responseContext.visitorData;
+          return json;
+        } catch (e) {
+          if (
+            !write &amp;&amp;
+            !e.fatal &amp;&amp;
+            attempt &lt; 2 &amp;&amp;
+            (e.name === &#39;AbortError&#39; || e instanceof TypeError || e.httpStatus &gt;= 500)
+          ) {
+            await delay(750 * (attempt + 1));
+            continue;
+          }
+          if (e.name === &#39;AbortError&#39;) throw new Error(&#39;The YouTube request timed out.&#39;);
+          throw e;
+        } finally {
+          clearTimeout(timer);
+        }
+      }
+    }
+
+    const host = document.createElement(&#39;div&#39;);
+    host.id = ROOT;
+    Object.assign(host.style, { position: &#39;fixed&#39;, inset: &#39;0&#39;, zIndex: &#39;2147483647&#39; });
+    const shadow = host.attachShadow({ mode: &#39;open&#39; });
+    function el(tag, parent, value = &#39;&#39;, attributes = {}) {
+      const element = document.createElement(tag);
+      if (value) element.textContent = value;
+      for (const [name, attribute] of Object.entries(attributes)) element.setAttribute(name, attribute);
+      parent.append(element);
+      return element;
+    }
+    el(
+      &#39;style&#39;,
+      shadow,
+      &#39;:host{font:15px/1.6 system-ui,sans-serif;color:#edf5f4;color-scheme:dark}*{box-sizing:border-box}.veil{height:100%;padding:24px;background:#091311db;display:grid;place-items:center}.box{width:min(580px,100%);max-height:92vh;overflow:auto;background:#142723;border:1px solid #496e62;border-radius:18px;padding:28px;box-shadow:0 24px 80px #0008}.eyebrow{font-size:11px;letter-spacing:.15em;color:#9ce7c8;font-weight:750}h1{font-size:29px;line-height:1.15;margin:10px 0 15px}p{color:#c0d2cb;margin:12px 0}.route{padding:13px 16px;background:#1d3730;border-radius:9px;margin:18px 0}.route small{font-size:11px;letter-spacing:.06em;display:block;text-transform:uppercase}.route a{color:#c4fbe4;text-decoration:none;overflow-wrap:anywhere}.route div+div{margin-top:12px}.route input{background:#10241d;border:1px solid #77a996;border-radius:6px;color:#e9fff5;padding:8px 10px;margin:6px 0;width:100%;font:inherit}.route label{display:block;color:#c0d2cb}.destination-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}button,.download{border:1px solid #77a996;background:#254b3d;color:#e9fff5;border-radius:7px;padding:10px 14px;font:600 14px system-ui;cursor:pointer;text-decoration:none}.primary{background:#bcf1d6;border-color:#bcf1d6;color:#12382b}button:disabled{opacity:.5;cursor:default}.actions{display:flex;gap:9px;flex-wrap:wrap;margin:22px 0 12px}.status{white-space:pre-line;overflow-wrap:anywhere;margin:18px 0}.summary{font-size:13px;color:#cce2d8}.note{font-size:12px;color:#adcbc0}.error{color:#ffd2bb}.download{display:inline-block;margin-top:12px;font-size:12px;background:transparent}[hidden]{display:none!important}input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #a9e6ca;outline-offset:3px}&#39;
+    );
+    const veil = el(&#39;div&#39;, shadow, &#39;&#39;, { class: &#39;veil&#39; });
+    const box = el(&#39;section&#39;, veil, &#39;&#39;, {
+      class: &#39;box&#39;,
+      role: &#39;dialog&#39;,
+      &#39;aria-modal&#39;: &#39;true&#39;,
+      &#39;aria-label&#39;: &#39;Copy YouTube playlist&#39;
+    });
+    el(&#39;div&#39;, box, &#39;YOUTUBE PLAYLIST COPIER · 1.3.0&#39;, { class: &#39;eyebrow&#39; });
+    el(&#39;h1&#39;, box, &#39;Add this playlist’s videos&#39;);
+    el(&#39;p&#39;, box, &#39;Copy videos to the destination you choose for this YouTube account.&#39;);
+    const route = el(&#39;div&#39;, box, &#39;&#39;, { class: &#39;route&#39; });
+    const from = el(&#39;div&#39;, route);
+    const to = el(&#39;div&#39;, route);
+    const playlistLink = (id) =&gt; ORIGIN + &#39;/playlist?list=&#39; + encodeURIComponent(id);
+    el(&#39;small&#39;, from, &#39;Current source&#39;);
+    const sourceLink = el(
+      source ? &#39;a&#39; : &#39;span&#39;,
+      from,
+      source || &#39;No playlist in this tab&#39;,
+      source ? { href: playlistLink(source), target: &#39;_blank&#39;, rel: &#39;noopener noreferrer&#39; } : {}
+    );
+    el(&#39;small&#39;, to, &#39;Destination&#39;);
+    const destinationLine = el(&#39;div&#39;, to, &#39;&#39;, { class: &#39;destination-actions&#39; });
+    const destLink = el(&#39;a&#39;, destinationLine, &#39;&#39;, { target: &#39;_blank&#39;, rel: &#39;noopener noreferrer&#39; });
+    const change = el(&#39;button&#39;, destinationLine, &#39;Change destination&#39;, { type: &#39;button&#39; });
+    const editor = el(&#39;form&#39;, to);
+    const label = el(&#39;label&#39;, editor, &#39;Destination playlist URL or ID&#39;);
+    const field = el(&#39;input&#39;, label, &#39;&#39;, { type: &#39;text&#39;, autocomplete: &#39;off&#39;, spellcheck: &#39;false&#39; });
+    const editorButtons = el(&#39;div&#39;, editor, &#39;&#39;, { class: &#39;destination-actions&#39; });
+    const saveButton = el(&#39;button&#39;, editorButtons, &#39;Save destination&#39;, { type: &#39;submit&#39; });
+    const keepButton = el(&#39;button&#39;, editorButtons, &#39;Keep current destination&#39;, { type: &#39;button&#39; });
+    const persistence = el(
+      &#39;p&#39;,
+      editor,
+      &#39;The destination is remembered for this YouTube account in this browser.&#39;,
+      { class: &#39;note&#39; }
+    );
+    const actions = el(&#39;div&#39;, box, &#39;&#39;, { class: &#39;actions&#39; });
+    const start = el(&#39;button&#39;, actions, &#39;Add videos&#39;, { class: &#39;primary&#39;, type: &#39;button&#39; });
+    const cancel = el(&#39;button&#39;, actions, &#39;Cancel&#39;, { type: &#39;button&#39; });
+    const close = el(&#39;button&#39;, actions, &#39;Close&#39;, { type: &#39;button&#39; });
+    const status = el(&#39;div&#39;, box, &#39;&#39;, { class: &#39;status&#39;, role: &#39;status&#39;, &#39;aria-live&#39;: &#39;polite&#39; });
+    const summary = el(&#39;div&#39;, box, &#39;&#39;, { class: &#39;summary&#39; });
+    el(
+      &#39;p&#39;,
+      box,
+      &#39;Duplicate checks are best effort. Unavailable or rejected entries are skipped. Completed additions are kept if canceled.&#39;,
+      { class: &#39;note&#39; }
+    );
+    const backup = el(&#39;a&#39;, box, &#39;Download source URLs&#39;, {
+      class: &#39;download&#39;,
+      download: &#39;YouTube-Source-Backup.txt&#39;
+    });
+    backup.hidden = true;
+    if (!owner || !storage)
+      persistence.textContent =
+        &#39;Account-specific storage is unavailable. This destination will apply only while this panel is open.&#39;;
+
+    function showMessage(message, error = false) {
+      status.textContent = message;
+      status.setAttribute(&#39;class&#39;, error ? &#39;status error&#39; : &#39;status&#39;);
+    }
+    function controls() {
+      destinationLine.hidden = !destination || editing;
+      editor.hidden = !editing;
+      keepButton.hidden = !destination;
+      if (destination) destLink.href = playlistLink(destination);
+      else destLink.removeAttribute(&#39;href&#39;);
+      saveButton.disabled = running;
+      change.disabled = running;
+      field.disabled = running;
+      keepButton.disabled = running;
+      start.disabled = running || editing || !source || !destination || source === destination;
+      cancel.disabled = !running || stopped;
+      close.disabled = running;
+    }
+    function readyMessage() {
+      if (!source)
+        return &#39;Open a source playlist whose address contains list=, then open Copy Videos again.&#39;;
+      if (!destination) return &#39;Choose a destination playlist before adding videos.&#39;;
+      if (source === destination)
+        return &#39;This is the destination playlist. Choose another destination or open a different source.&#39;;
+      return &#39;Ready. Click Add videos to start.&#39;;
+    }
+    function useDestination(id) {
+      destination = id;
+      editing = !id;
+      destLink.textContent = id;
+      field.value = id;
+      summary.textContent = &#39;&#39;;
+      controls();
+      showMessage(readyMessage());
+    }
+    change.addEventListener(&#39;click&#39;, () =&gt; {
+      if (running) return;
+      editing = true;
+      field.value = destination;
+      controls();
+      field.focus();
+    });
+    keepButton.addEventListener(&#39;click&#39;, () =&gt; {
+      if (running) return;
+      editing = false;
+      controls();
+      showMessage(readyMessage());
+      change.focus();
+    });
+    editor.addEventListener(&#39;submit&#39;, (event) =&gt; {
+      event.preventDefault();
+      if (running) return;
+      try {
+        accountCheck();
+        const id = playlistId(field.value);
+        const remembered = preference.save(id);
+        useDestination(id);
+        if (!remembered) showMessage(&#39;Using this destination for this panel only. &#39; + readyMessage());
+        if (start.disabled) change.focus();
+        else start.focus();
+      } catch (error) {
+        showMessage(error.message, true);
+        field.focus();
+      }
+    });
+
+    // A running copy always uses the destination shown when Add videos was clicked.
+    // An idle panel picks up changes from another tab before its next run.
+    function onStorage(event) {
+      if (
+        !storage ||
+        !preference.key ||
+        event.storageArea !== storage ||
+        (event.key !== null &amp;&amp; event.key !== preference.key)
+      )
+        return;
+      if (running) preferenceChangedDuringRun = true;
+      else useDestination(preference.read());
+    }
+    window.addEventListener(&#39;storage&#39;, onStorage);
+    function sourceScanned(data) {
+      sourceLink.textContent = data.title;
+      try {
+        if (backupURL) URL.revokeObjectURL(backupURL);
+        const ids = [
+          ...new Set(data.rows.map((row) =&gt; row.id).filter((id) =&gt; /^[A-Za-z0-9_-]{11}$/.test(id)))
+        ];
+        const urls = ids.map((id) =&gt; ORIGIN + &#39;/watch?v=&#39; + id).join(&#39;\n&#39;) + &#39;\n&#39;;
+        backupURL = URL.createObjectURL(new Blob([urls], { type: &#39;text/plain;charset=utf-8&#39; }));
+        backup.href = backupURL;
+        backup.hidden = false;
+      } catch {
+        /* Copying is independent of downloading a local backup. */
+      }
+    }
+    function updateSummary(result) {
+      destLink.textContent = result.destinationTitle;
+      const counts = [
+        result.added.toLocaleString() + &#39; added&#39;,
+        result.already.toLocaleString() + &#39; already present&#39;,
+        result.unavailable.toLocaleString() + &#39; unavailable&#39;,
+        result.repeated.toLocaleString() + &#39; repeated source IDs&#39;
+      ];
+      for (const [count, label] of [
+        [result.rejected, &#39;rejected&#39;],
+        [result.noRoom, &#39;did not fit&#39;],
+        [result.uncertain, &#39;uncertain&#39;],
+        [result.omitted, &#39;entries not supplied by YouTube&#39;]
+      ]) {
+        if (count) counts.push(count.toLocaleString() + &#39; &#39; + label);
+      }
+      summary.textContent =
+        counts.join(&#39; · &#39;) +
+        (result.duplicateCheckIncomplete
+          ? &#39;\nThe destination could only be checked for some duplicates.&#39;
+          : &#39;&#39;);
+    }
+    async function copyToChosenDestination() {
+      accountCheck();
+      forgetOldRun(activeDestination);
+      const core = makePlaylistCopier({
+        destination: activeDestination,
+        account,
+        post,
+        cancelled: () =&gt; stopped,
+        save: (job) =&gt; {
+          journal = job;
+        },
+        progress: showMessage,
+        source: sourceScanned,
+        summary: updateSummary
+      });
+      const result = await core.run(source);
+      const messages = [&#39;Finished. &#39; + result.added + &#39; additions accepted.&#39;];
+      if (result.noRoom)
+        messages.push(
+          &#39;The destination reached its 5,000-entry limit. &#39; + result.noRoom + &#39; videos did not fit.&#39;
+        );
+      if (result.rejected) messages.push(result.rejected + &#39; videos were rejected by YouTube.&#39;);
+      if (result.uncertain)
+        messages.push(result.uncertain + &#39; additions could not be confirmed and were not repeated.&#39;);
+      if (result.duplicateCheckIncomplete)
+        messages.push(&#39;Some duplicates may remain because the destination could not be fully checked.&#39;);
+      showMessage(messages.join(&#39; &#39;));
+    }
+    start.addEventListener(&#39;click&#39;, async () =&gt; {
+      if (start.disabled || running) return;
+      stopped = false;
+      activeDestination = destination;
+      running = true;
+      controls();
+      showMessage(&#39;Starting the copy…&#39;);
+      try {
+        if (navigator.locks?.request) {
+          // The target playlist is the shared resource, including for collaborators.
+          await navigator.locks.request(
+            &#39;mmrpgs:copy-videos:playlist:&#39; + activeDestination,
+            { ifAvailable: true },
+            async (lock) =&gt; {
+              if (!lock) throw new Error(&#39;Another copy to this destination is running in another tab.&#39;);
+              await copyToChosenDestination();
+            }
+          );
+        } else {
+          throw new Error(
+            &#39;This browser does not provide Web Locks for YouTube. Use an up-to-date Firefox window so copies to the same destination can be coordinated.&#39;
+          );
+        }
+      } catch (error) {
+        showMessage(
+          error.message || &#39;The copy could not finish. Completed additions are kept.&#39;,
+          !error.canceled
+        );
+      } finally {
+        journal = null;
+        activeDestination = &#39;&#39;;
+        running = false;
+        start.textContent = &#39;Add videos again&#39;;
+        if (preferenceChangedDuringRun) {
+          preferenceChangedDuringRun = false;
+          const lastStatus = status.textContent;
+          const lastError = status.getAttribute(&#39;class&#39;) === &#39;status error&#39;;
+          useDestination(preference.read());
+          showMessage(
+            lastStatus + &#39; The destination setting changed in another tab. &#39; + readyMessage(),
+            lastError
+          );
+        } else controls();
+      }
+    });
+    cancel.addEventListener(&#39;click&#39;, () =&gt; {
+      stopped = true;
+      controls();
+      showMessage(&#39;Canceling after the current request. Completed additions will be kept.&#39;);
+    });
+    const beforeUnload = (event) =&gt; {
+      if (running) {
+        event.preventDefault();
+        event.returnValue = &#39;&#39;;
+      }
+    };
+    window.addEventListener(&#39;beforeunload&#39;, beforeUnload);
+    close.addEventListener(&#39;click&#39;, () =&gt; {
+      if (running) return;
+      host.remove();
+      window.removeEventListener(&#39;beforeunload&#39;, beforeUnload);
+      window.removeEventListener(&#39;storage&#39;, onStorage);
+      if (backupURL) URL.revokeObjectURL(backupURL);
+    });
+    document.documentElement.append(host);
+    useDestination(destination);
+    if (editing) field.focus();
+    else if (start.disabled) change.focus();
+    else start.focus();
+  }
+
+  launchPlaylistCopier();
+})();
+</pre>
+  </details>
+  <noscript><p>Enable JavaScript to use the import and copy controls. The draggable bookmark link is available above.</p></noscript>
+</main>
+<script>
+  'use strict';
+  const bookmark = document.getElementById('bookmark');
+  const bookmarkURL = bookmark.getAttribute('href');
+  const bookmarkName = bookmark.textContent;
+  const field = document.getElementById('bookmark-code');
+  const status = document.getElementById('install-status');
+  field.value = bookmarkURL;
+
+  function download(filename, type, text) {
+    const url = URL.createObjectURL(new Blob([text], { type }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  bookmark.addEventListener('click', (event) => {
+    event.preventDefault();
+    status.textContent = 'Drag the bookmark to your toolbar, then open www.youtube.com to use it.';
+  });
+
+  document.getElementById('copy-code').addEventListener('click', async () => {
+    field.focus();
+    field.select();
+    try {
+      await navigator.clipboard.writeText(bookmarkURL);
+      status.textContent = 'Bookmark URL copied.';
+    } catch {
+      status.textContent = 'The URL is selected. Use your usual Copy shortcut.';
+    }
+  });
+
+  document.getElementById('export-bookmark').addEventListener('click', () => {
+    const entry = document.createElement('a');
+    entry.setAttribute('href', bookmarkURL);
+    entry.textContent = bookmarkName;
+    const header = '<!DOCTYPE NETSCAPE-Bookmark-file-1>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n<title>Bookmarks</title>\n<h1>Bookmarks</h1>\n';
+    download('copy-videos-bookmark.html', 'text/html;charset=utf-8', header + '<DL><p>\n<DT>' + entry.outerHTML + '\n</DL><p>\n');
+  });
+
+  document.getElementById('download-source').addEventListener('click', () => {
+    download('copy-videos.js', 'text/javascript;charset=utf-8', document.getElementById('source-code').textContent);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{NAME}} · {{SITE}} bookmarklet</title>
+  <style>
+    :root { color-scheme: light dark; font: 17px/1.55 system-ui, sans-serif; color: #223427; background: #faf9f4; }
+    body { margin: 0; }
+    main { width: min(44rem, calc(100% - 3rem)); margin: 3rem auto; }
+    h1, h2 { line-height: 1.15; }
+    h1 { font-size: clamp(2.1rem, 7vw, 3.6rem); margin: .3rem 0 .6rem; }
+    h2 { font-size: 1.35rem; margin: 1.7rem 0 .55rem; }
+    p { margin: .6rem 0; }
+    .meta { font-weight: 650; }
+    .install { margin: 1.6rem 0; padding: .3rem 1.25rem 1.1rem; border: 1px solid #b5c7b7; border-radius: .5rem; background: #eff3eb; }
+    .install h2 { margin: .8rem 0 .4rem; }
+    #bookmark { display: inline-block; min-width: 2.4rem; padding: .18rem .6rem; text-align: center; border-radius: .35rem; background: #235638; color: white; text-decoration: none; font-size: 1.45rem; font-weight: 700; vertical-align: middle; }
+    details { margin: 1rem 0; border-block-start: 1px solid #b5c7b7; padding-top: .75rem; }
+    summary { cursor: pointer; font-weight: 650; }
+    button { font: inherit; padding: .32rem .7rem; cursor: pointer; }
+    textarea, pre { box-sizing: border-box; width: 100%; padding: .6rem; font: .84rem/1.45 ui-monospace, monospace; }
+    textarea { resize: vertical; }
+    pre { overflow: auto; max-height: 22rem; }
+    li { margin-bottom: .4rem; }
+    :focus-visible { outline: 3px solid #3779b5; outline-offset: 3px; }
+    @media (prefers-color-scheme: dark) {
+      :root { color: #e6eee7; background: #17231b; }
+      .install { background: #223528; border-color: #597360; }
+      #bookmark { background: #b1dfbc; color: #15271a; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="meta">{{SITE}} · Version {{VERSION}}</p>
+    <h1>{{NAME}}</h1>
+    <p>{{SUMMARY}}</p>
+  </header>
+  <section class="install">
+    <h2>Install in Firefox</h2>
+    <p>Drag <a id="bookmark" draggable="true" href="{{BOOKMARK_URL}}">{{LABEL}}</a> to your Bookmarks Toolbar. The bookmark name is <strong>{{LABEL}}</strong>.</p>
+    <p>Open <a href="https://{{HOST}}/">{{HOST}}</a> in the account you want to use, then click the saved bookmark. To update, close the existing panel and replace the old bookmark.</p>
+  </section>
+  <h2>Using {{NAME}}</h2>
+  <ul>
+{{NOTES}}
+  </ul>
+  <details>
+    <summary>Import a bookmark or copy its URL</summary>
+    <p>Download the bookmark file and select it under <strong>Import and Backup → Import Bookmarks from HTML</strong> in the Firefox bookmarks manager.</p>
+    <button type="button" id="export-bookmark">Download bookmark file</button>
+    <p><label for="bookmark-code">For manual setup, create a bookmark named <strong>{{LABEL}}</strong> and use this entire URL as its address.</label></p>
+    <textarea id="bookmark-code" rows="3" readonly spellcheck="false"></textarea>
+    <button type="button" id="copy-code">Copy bookmark URL</button>
+  </details>
+  <p id="install-status" role="status" aria-live="polite"></p>
+  <details>
+    <summary>Readable JavaScript</summary>
+    <p>The source below is the input used to build this bookmarklet.</p>
+    <button type="button" id="download-source">Download JavaScript</button>
+    <pre id="source-code">{{SOURCE}}</pre>
+  </details>
+  <noscript><p>Enable JavaScript to use the import and copy controls. The draggable bookmark link is available above.</p></noscript>
+</main>
+<script>
+  'use strict';
+  const bookmark = document.getElementById('bookmark');
+  const bookmarkURL = bookmark.getAttribute('href');
+  const bookmarkName = bookmark.textContent;
+  const field = document.getElementById('bookmark-code');
+  const status = document.getElementById('install-status');
+  field.value = bookmarkURL;
+
+  function download(filename, type, text) {
+    const url = URL.createObjectURL(new Blob([text], { type }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  bookmark.addEventListener('click', (event) => {
+    event.preventDefault();
+    status.textContent = 'Drag the bookmark to your toolbar, then open {{HOST}} to use it.';
+  });
+
+  document.getElementById('copy-code').addEventListener('click', async () => {
+    field.focus();
+    field.select();
+    try {
+      await navigator.clipboard.writeText(bookmarkURL);
+      status.textContent = 'Bookmark URL copied.';
+    } catch {
+      status.textContent = 'The URL is selected. Use your usual Copy shortcut.';
+    }
+  });
+
+  document.getElementById('export-bookmark').addEventListener('click', () => {
+    const entry = document.createElement('a');
+    entry.setAttribute('href', bookmarkURL);
+    entry.textContent = bookmarkName;
+    const header = '<!DOCTYPE NETSCAPE-Bookmark-file-1>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n<title>Bookmarks</title>\n<h1>Bookmarks</h1>\n';
+    download('{{ID}}-bookmark.html', 'text/html;charset=utf-8', header + '<DL><p>\n<DT>' + entry.outerHTML + '\n</DL><p>\n');
+  });
+
+  document.getElementById('download-source').addEventListener('click', () => {
+    download('{{ID}}.js', 'text/javascript;charset=utf-8', document.getElementById('source-code').textContent);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+My Machiavellian Random-Playlist-Generation System
+Maintenance and development rules
+=================================
+
+1. Project scope and authority
+------------------------------
+
+This is a collection of seven independent, self-contained Firefox
+bookmarklets. Five operate on https://music.youtube.com. Two operate on
+https://www.youtube.com. Each installer can be used on its own. The
+repository is distributed under the Unlicense in LICENSE.
+
+Read this document before changing the project. Keep it current in the
+same change as any contract, design decision, build step, storage format
+or maintenance rule it describes. Keep README.md current when the
+installation process, behavior, controls or developer workflow changes.
+AGENTS.md directs maintainers here. Use the installers to explain the
+individual tools and README.md to explain the whole system to people.
+
+These tools manage real accounts. Preserve the target of each write,
+account scoping, cancellation semantics, recovery records, and meaning
+of counters when changing code. Treat these as functional requirements
+that guide implementation and review.
+
+2. Source map
+-------------
+
+The editable code for a tool lives in one readable file in src/. Each
+entry in tools.json supplies its packaging identity. The names below are
+the canonical public installer filenames under installers/.
+
+YouTube Music
+
+  add-songs.js          +    YouTube-Music-Alfredo-Import.html
+  random-songs.js       ⤨    YouTube-Music-Alfredo-Collection.html
+  list-artists.js       ≡    YouTube-Music-Alfredo-Artists.html
+  delete-duplicates.js  ⌫    YouTube-Music-Alfredo-Delete-Duplicates.html
+  like-songs.js         ♥    YouTube-Music-Alfredo-Like-Songs.html
+
+YouTube
+
+  random-sample.js      ⤨    YouTube-Random-Sample.html
+  copy-videos.js        +    YouTube-Playlist-Copier.html
+
+Preserve both the short toolbar symbol and the descriptive tool name in
+the panel and installer. The plus and shuffle symbols intentionally recur
+across sites. The intended origin is part of the identity of each tool.
+Numbered desktop download suffixes are outside the public filename.
+
+The UI, session adapter and core operations for each tool travel together
+in its bookmark URL. Keep the functions responsible for browser access
+and for playlist operations recognizable. Existing core functions accept
+dependencies directly, which lets tests drive them with fixture data.
+Inspect the end of the file to see how the browser launcher receives its
+core. The build packs the runnable file into the common installer.
+
+3. Code ownership and build conventions
+--------------------------------------
+
+Make runtime changes in src/. Update packaging metadata in tools.json.
+The installer generator is scripts/build.mjs and its template is
+scripts/installer.html. Change them for packaging changes. Regenerate
+the HTML from those sources and include the results in the same change.
+A downloadable installer must contain its full runtime. People can drag
+the link, import the exported bookmarks HTML, or copy the complete URL
+into a bookmark with the specified name. All three methods must yield the
+same executable code and intended name.
+
+Use meaningful function names and straightforward data structures.
+Include the reason for a nonobvious decision where the code makes it,
+especially when handling partial site responses or a write with an
+unknown result. Keep new functionality near the operation that owns it.
+Extract a shared abstraction only when the callers have the same behavior
+and the build can still produce fully independent bookmarks. A copy of
+the same title parser inside a standalone runtime does not make its
+discovery and write policies interchangeable with another runtime's.
+
+The tool version belongs to the affected tool. Keep the catalogue,
+installer, runtime version display where present, and README version table
+in agreement. Preserve canonical installer filenames across versions so
+document links keep working. Keep chapter-level documentation focused on
+current behavior. Git history preserves the evolution of old versions.
+
+4. Collection identity and mutation contracts
+--------------------------------------------
+
+The five Music tools discover the selected account's library playlists
+by complete title. Example matches are Alfredo's__I__, _ Alfredo's __II__
+and __Alfredo's__XXI__. The optional prefix consists of spaces or
+underscores. The apostrophe is straight. Optional spaces are allowed
+between Alfredo's and the first double underscore. The numeral is a
+canonical uppercase Roman numeral. The final double underscore ends the
+name. Playlists outside the matching collection have separate roles,
+such as a new private sample. Keep the same name interpretation across all
+five Music tools when changing discovery.
+
+Source identity is the playlist ID. Track identity is the YouTube video
+ID, including when several occurrences belong to different playlists or
+several uploads describe the same recording. Exact removal also requires
+the entry identifier for the particular occurrence. Artist ownership,
+profile identity, track ID and playlist-entry ID serve different jobs.
+
+Add Songs
+  Account-specific artist choices may include or exclude multiple
+  profiles with the same name. Existing video IDs count across every
+  matching playlist. Import from eligible releases based on album
+  ownership or the main track artist of a Various Artists album.
+  Destination playlists must be editable and have at least 500 free
+  slots when selected. An active one may fill to 5,000 entries.
+  Create a private playlist with the next numeral when required. Retain
+  pending writes and artist choices in account-scoped local storage.
+  Reconcile interrupted additions or creation before appending again.
+  A collection scan is reusable only after completion. Confirmed writes
+  update the cached membership and capacity for later imports.
+
+Random Songs and Random Sample
+  Both read their source playlists and create a new private destination.
+  Creation must produce a valid ID distinct from every source before any
+  item write. Enforce that rule again when restoring a saved job. Pin the
+  selected IDs and their order before creation. A resumed destination
+  must contain a prefix of the intended sequence. Reject extra entries,
+  a changed sequence or a mismatched destination before appending.
+  Confirm the complete result. When creation returns an uncertain
+  outcome, preserve the record and let the person check their account.
+  A retry cannot safely infer the ID of a newly created playlist from
+  its title alone.
+
+  The Music sampler deduplicates the whole collection, excludes disliked
+  IDs, and charges collaborations to each credited artist. Its artist
+  quotas can relax in the documented fill pass. Dislike, availability
+  and duplicate checks still apply in that pass. Missing sources must
+  fail sampling rather than silently bias the result. Playback checks
+  default off. The regular YouTube sampler operates on one saved video
+  playlist. It defaults playback checks on. Both limit the result to
+  1–5,000 eligible items and preserve the source on success, failure
+  and cancellation.
+
+List Artists
+  Count distinct video IDs using album ownership and the first main
+  track artist on Various Artists compilations. Keep separate artist
+  profiles with identical names distinguishable. Changing the minimum
+  can reuse stored counts. Output one quoted artist and integer count
+  per line, sorted by count descending and then name ascending. The
+  tool automatically subscribes the active account to the listed
+  artists using the channel identified on the artist's page. Keep
+  subscription failures independent from producing usable counts.
+
+Delete Duplicates
+  Manual mode is the default. Automatic mode keeps the first occurrence
+  in Roman playlist order and then in playlist entry order. Prove which
+  occurrence is the keeper and target only an individually identified
+  extra entry. Save choices and pending operations before removal.
+  Retain the account-specific IndexedDB state and cross-tab lock so two
+  sessions cannot act on the same account's queue concurrently. Preserve
+  explicit partial reads and unconfirmed outcomes. Clearing or restarting
+  local work does not restore a deleted entry. Restart also clears the
+  memo. Leave names, whole playlists and song ratings alone.
+
+Like Songs
+  Require Start. Shuffle the collection playlists, finish reading one
+  before sending its native Like commands, then rescan the playlist to
+  refresh the counters. Eligible entries are available and explicitly
+  unrated and have a usable Like command. Preserve existing likes and
+  dislikes. Pace requests about 1.2 seconds apart, one at a time.
+  Requests sent counts dispatches. A playlist rescan determines the
+  current rating totals. Keep Cancel/Resume in memory and distinguish
+  temporary read or network interruptions from account changes.
+
+Copy Videos
+  Set the destination explicitly on first use, remember it for the
+  signed-in YouTube account, and allow it to be changed. Use a panel-only
+  choice if storage or a stable account identity is unavailable. Pin the
+  destination for each run. The current source must be distinct from the
+  destination. Check both before adding videos. Preserve source order
+  and skip known destination entries and unavailable items. Destination
+  scans are best effort. A partial scan can leave duplicates. Keep
+  that limitation visible in the human guide.
+  Isolate rejected entries and report uncertain writes separately.
+  An unknown result must never trigger a blind replay of the write.
+
+5. Browser state, recovery and site interfaces
+----------------------------------------------
+
+Check the exact origin before interacting with page configuration,
+account state or the network. Act only with the selected site's signed-in
+session. Keep account identifiers, credentials and real user playlist
+data out of fixtures, logs and distribution files. Browser storage may
+hold the minimum account-scoped state required by the tool. A change of
+account must not continue a saved write on the new account.
+
+Maintain existing storage keys and record semantics across compatible
+updates. The two samplers keep their pending jobs in tab session storage
+under youtube-random-sample-job-v1 and youtube-music-collection-sample-job-v1.
+Add Songs persists choices and interrupted additions under its
+alfredo-import-v1 account key. Delete Duplicates stores the run and memo
+in alfredo-delete-duplicates-v1 in IndexedDB and locks by account. List
+Artists and Like Songs hold scan progress in memory. Copy Videos stores
+its saved destination per account. Inspect the owning runtime before
+changing persistence. Validate every restored record. If a state shape
+changes, explicitly handle compatible older records and fail closed on
+ambiguous writes. Never reassign a previous account's data to the current
+account by default.
+
+YouTube's website interfaces can change independently of this project.
+Develop parsers against representative, sanitized responses. Follow page
+continuations, detect incomplete scans, preserve confirmed progress and
+report uncertainty. Retry reads only within the owning tool's recovery
+policy. A cancelled request may already have reached the server. Check the
+destination before retrying a mutation where its outcome can be verified.
+Keep each tool's partial-read policy explicit. A partial artist inventory,
+for example, does not make a partial collection safe to sample.
+
+6. Verification and release
+---------------------------
+
+Run these commands from a checkout with Node.js 20 or newer and npm.
+
+  npm ci
+  npm run build
+  npm run check
+
+npm run check compares the shipped files against generated output, then
+runs the tests. Use npm test for a test-only run. The command line is for
+maintainers. Users need only the HTML installer and Firefox. Keep build
+dependencies out of the browser runtime. The packager uses the pinned
+Terser version in package-lock.json to create the bookmark URLs.
+GitHub Actions repeats the same check on Node.js 20 and 24 for pushes and
+pull requests. Keep .github/workflows/check.yml and the documented
+commands in sync if the supported runtime or verification steps change.
+
+For packaging changes, verify that every installer builds from a clean
+checkout. The drag link, exported HTML and manual URL must agree, begin
+with javascript: and launch at the intended origin. Check both symbols
+used on more than one host. An older installed bookmark retains its
+embedded runtime until replaced.
+
+For changes to a write path, exercise normal, interrupted and resumed
+operations with offline fixtures and record the requested target IDs.
+For each sampler, verify that malformed creation results or saved records
+cannot point writes at a source, even when a destination already contains
+items. For the copier, test account isolation, destination changes and the
+same-source case. Exercise tool-specific identity rules, occurrence
+selection, duplicate protection and request counters when changing them.
+Use synthetic accounts and playlist IDs. A simulated success establishes
+the software's response to the fixture. Live compatibility requires a
+separate observation and should be described as such.
+
+Before publishing, review the generated files, the README tool table,
+the controls exposed by the installers, and this maintenance guide
+together. Record any verification that remains outstanding and report
+actual test results. Use the LICENSE file as the project's license text.

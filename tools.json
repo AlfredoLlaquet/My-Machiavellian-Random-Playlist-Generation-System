@@ -1,0 +1,100 @@
+[
+  {
+    "id": "add-songs",
+    "name": "Add Songs",
+    "host": "music.youtube.com",
+    "version": "2.1.1",
+    "label": "+",
+    "installer": "YouTube-Music-Alfredo-Import.html",
+    "summary": "Enter artists to add their missing tracks to your numbered collection playlists.",
+    "notes": [
+      "Enter artist names separated by commas. When different channels share a name, the panel lets you choose which artist profiles to use.",
+      "The importer compares video IDs across the collection. It fills eligible editable playlists in Roman numeral order and creates the next private playlist when it needs more room.",
+      "A completed scan can be reused while the panel stays open. The tool updates its counts as it confirms additions."
+    ]
+  },
+  {
+    "id": "random-songs",
+    "name": "Random Songs",
+    "host": "music.youtube.com",
+    "version": "2.1.1",
+    "label": "⤨",
+    "installer": "YouTube-Music-Alfredo-Collection.html",
+    "summary": "Draw distinct tracks from across your numbered collection and save the shuffled selection to a new private playlist.",
+    "notes": [
+      "Choose a playlist name, track count and maximum percentage per artist. The defaults are Music Taste I, 200 tracks and 1%.",
+      "The tool skips disliked tracks and duplicate video IDs. If the artist limit leaves too few eligible tracks, it relaxes the limit to fill the playlist and reports that in the panel.",
+      "The source playlists are read during sampling. All playlist additions go to the newly created destination."
+    ]
+  },
+  {
+    "id": "list-artists",
+    "name": "List Artists",
+    "host": "music.youtube.com",
+    "version": "2.2.0",
+    "label": "≡",
+    "installer": "YouTube-Music-Alfredo-Artists.html",
+    "summary": "Count distinct tracks by artist, copy the ranked list and subscribe to the artists who meet the threshold.",
+    "notes": [
+      "Opening the panel starts the scan. It counts by album artist and uses the main track artist for Various Artists compilations.",
+      "The minimum defaults to 15 tracks. Listed artists are checked and subscribed automatically when their subscription status permits.",
+      "Copy list produces a quoted artist name and a count on each line, sorted by track count and then artist name."
+    ]
+  },
+  {
+    "id": "delete-duplicates",
+    "name": "Delete Duplicates",
+    "host": "music.youtube.com",
+    "version": "1.0.3",
+    "label": "⌫",
+    "installer": "YouTube-Music-Alfredo-Delete-Duplicates.html",
+    "summary": "Find repeated video IDs in your numbered collection and choose which playlist entry to keep.",
+    "notes": [
+      "Manual mode lets you choose the surviving occurrence or skip a track. Automatic mode keeps the first occurrence in Roman playlist order and removes the other identifiable entries.",
+      "Different uploads with different video IDs remain separate. Each removal targets a specific playlist entry.",
+      "The memo records what happened. Resume continues a saved run. Restart discards that run and its memo and starts a new scan."
+    ]
+  },
+  {
+    "id": "like-songs",
+    "name": "Like Songs",
+    "host": "music.youtube.com",
+    "version": "2.0.0",
+    "label": "♥",
+    "installer": "YouTube-Music-Alfredo-Like-Songs.html",
+    "summary": "Like eligible unrated songs, one collection playlist at a time, in random playlist order.",
+    "notes": [
+      "Click Start to begin. The tool skips previously liked, disliked and unavailable tracks and sends eligible Like requests about 1.2 seconds apart.",
+      "The request counter measures requests sent. A full playlist rescan refreshes the recorded ratings after each pass.",
+      "Cancel and Resume work while the panel stays open. Closing it discards in-memory progress, and saved YouTube Music ratings persist."
+    ]
+  },
+  {
+    "id": "random-sample",
+    "name": "Random Sample",
+    "host": "www.youtube.com",
+    "version": "1.0.1",
+    "label": "⤨",
+    "installer": "YouTube-Random-Sample.html",
+    "summary": "Sample a chosen number of distinct videos from one YouTube playlist into a new private playlist.",
+    "notes": [
+      "Open the source playlist on regular YouTube. Enter the number of videos and the name of the new playlist.",
+      "The sampler reads the whole source, deduplicates video IDs and shuffles the result. With playback checks enabled it replaces unavailable candidates when possible.",
+      "The destination is created separately. If an addition is interrupted, recovery checks the existing destination order before continuing."
+    ]
+  },
+  {
+    "id": "copy-videos",
+    "name": "Copy Videos",
+    "host": "www.youtube.com",
+    "version": "1.3.0",
+    "label": "+",
+    "installer": "YouTube-Playlist-Copier.html",
+    "summary": "Copy videos from the open YouTube playlist into an existing destination playlist you choose.",
+    "notes": [
+      "Choose an editable destination on first use. The tool remembers it for your YouTube account in this browser and lets you change it later.",
+      "Open a different playlist as the source, review the destination, then click Add videos. Copying preserves source order, skips unavailable entries and checks for existing videos when possible.",
+      "Download source URLs saves a plain-text list. Cancel stops further requests, and completed additions stay in the destination."
+    ]
+  }
+]
